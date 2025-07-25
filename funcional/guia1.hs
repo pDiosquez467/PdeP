@@ -9,3 +9,18 @@
 -- False
 esMultiploDeTres :: Integer -> Bool
 esMultiploDeTres x = x `mod` 3 == 0
+
+
+-- | Devuelve 'True' si el segundo número es múltiplo del primero, y 'False' en caso contrario.
+--
+-- El primer parámetro representa el divisor, y el segundo, el número que se evalúa.
+--
+-- === Ejemplos
+--
+-- >>> esMultiploDe 2 16
+-- True
+--
+-- >>> esMultiploDe 5 16
+-- False
+esMultiploDe :: Integer -> Integer -> Bool 
+esMultiploDe divisor numero = numero `mod` divisor == 0
