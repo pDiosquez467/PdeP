@@ -1,6 +1,6 @@
 # Paradigmas de Programación
 
-Este repositorio contiene el material y las soluciones a los ejercicios de la materia **Paradigmas de Programación**, que abarca tres paradigmas fundamentales:
+Este repositorio contiene el material y las soluciones a los ejercicios de la materia **Paradigmas de Programación** de UTN FRBA, que abarca tres paradigmas fundamentales:
 
 - **Paradigma Funcional**: programación basada en funciones puras, sin efectos secundarios, con énfasis en recursividad, composición, y tipos estáticos.  
   Lenguaje usado: Haskell.
