@@ -24,3 +24,28 @@ esMultiploDeTres x = x `mod` 3 == 0
 -- False
 esMultiploDe :: Integer -> Integer -> Bool 
 esMultiploDe divisor numero = numero `mod` divisor == 0
+
+
+-- | Devuelve el cubo del número dado.
+-- 
+-- === Ejemplo
+--
+-- >>> cubo 2
+-- 8
+--
+cubo :: Num a => a -> a 
+cubo x = x * x * x 
+
+
+-- | Devuelve el área de un rectángulo dada su base y su altura.
+-- 
+-- === Ejemplo
+--
+-- >>> area 3 5
+-- 15
+--
+-- >>> area 1.2 4.2
+-- 5.04
+--
+area :: Num a => a -> a -> a 
+area base altura = base * altura
