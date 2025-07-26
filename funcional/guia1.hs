@@ -65,3 +65,16 @@ area base altura = base * altura
 esBisiesto :: Integer -> Bool 
 esBisiesto anio = esMultiploDe 400 anio ||
                  (esMultiploDe 4 anio && not (esMultiploDe 100 anio))
+
+
+-- | Convierte una temperatura en grados Celsius a grados Fahrenheit.
+-- 
+-- === Ejemplos
+--
+-- >>> celsiusToFahr 0
+-- 32.0
+--
+-- >>> celsiusToFahr 100
+-- 212.0
+celsiusToFahr :: Float -> Float
+celsiusToFahr c = c * (9 / 5) + 32
