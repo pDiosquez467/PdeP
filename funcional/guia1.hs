@@ -76,5 +76,18 @@ esBisiesto anio = esMultiploDe 400 anio ||
 --
 -- >>> celsiusToFahr 100
 -- 212.0
-celsiusToFahr :: Float -> Float
+celsiusToFahr :: Fractional a => a -> a 
 celsiusToFahr c = c * (9 / 5) + 32
+
+
+-- | Convierte una temperatura en grados Fahrenheit a grados Celsius.
+-- 
+-- === Ejemplos
+--
+-- >>> fahrToCelsius 32
+-- 0.0
+--
+-- >>> fahrToCelsius 98
+-- 36.666668
+fahrToCelsius :: Fractional a => a -> a
+fahrToCelsius f = (f - 32) * (5 / 9)
