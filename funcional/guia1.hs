@@ -38,7 +38,8 @@ cubo x = x * x * x
 
 
 -- | Devuelve el área de un rectángulo dada su base y su altura.
--- | PRE: Los números dados deben ser >= 0. 
+--
+-- Precondición == Los números dados deben ser >= 0. 
 -- 
 -- === Ejemplo
 --
@@ -94,14 +95,31 @@ fahrToCelsius f = (f - 32) * (5 / 9)
 
 
 -- | Indica si una temperatura expresada en grados Fahrenheit es fría.
--- | Nota Bene: Se considera quie una temperatura es fría si es menor a 8 grados Celsius.
 -- 
+-- Se considera que una temperatura es fría si es menor a 8 grados Celsius.
+--
 -- === Ejemplos
 --
 -- >>> haceFrio 100
--- False 
+-- False
 --
--- >>> fahrToCelsius 0
+-- >>> haceFrio 0
 -- True
 haceFrio :: (Fractional a, Ord a) => a -> Bool 
-haceFrio gradosFah =  fahrToCelsius gradosFah < 8
+haceFrio gradosFah = fahrToCelsius gradosFah < 8
+
+
+-- | Devuelve el mínimo común múltiplo entre dos números dados.
+-- 
+-- Precondición == Requiere que ambos números sean mayores que 0.
+--
+-- === Ejemplos
+--
+-- >>> mcm 12 3
+-- 12
+--
+-- >>> mcm 4 5
+-- 20
+mcm :: Integer -> Integer -> Integer
+mcm numero otroNumero = (numero * otroNumero) `div` gcd numero otroNumero
+  
