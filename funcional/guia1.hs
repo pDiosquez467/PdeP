@@ -38,6 +38,7 @@ cubo x = x * x * x
 
 
 -- | Devuelve el área de un rectángulo dada su base y su altura.
+-- | PRE: Los números dados deben ser >= 0. 
 -- 
 -- === Ejemplo
 --
@@ -49,3 +50,18 @@ cubo x = x * x * x
 --
 area :: Num a => a -> a -> a 
 area base altura = base * altura
+
+
+-- | Indica si el año dado es bisiesto.  
+-- 
+-- === Ejemplo
+--
+-- >>> esBisiesto 2000
+-- True 
+--
+-- >>> esBisiesto 2025
+-- False 
+--
+esBisiesto :: Integer -> Bool 
+esBisiesto anio = esMultiploDe 400 anio ||
+                 (esMultiploDe 4 anio && not (esMultiploDe 100 anio))
