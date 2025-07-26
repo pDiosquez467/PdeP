@@ -91,3 +91,17 @@ celsiusToFahr c = c * (9 / 5) + 32
 -- 36.666668
 fahrToCelsius :: Fractional a => a -> a
 fahrToCelsius f = (f - 32) * (5 / 9)
+
+
+-- | Indica si una temperatura expresada en grados Fahrenheit es fría.
+-- | Nota Bene: Se considera quie una temperatura es fría si es menor a 8 grados Celsius.
+-- 
+-- === Ejemplos
+--
+-- >>> haceFrio 100
+-- False 
+--
+-- >>> fahrToCelsius 0
+-- True
+haceFrio :: (Fractional a, Ord a) => a -> Bool 
+haceFrio gradosFah =  fahrToCelsius gradosFah < 8
