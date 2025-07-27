@@ -208,3 +208,49 @@ max3 x y z = x `max` y `max` z
 -- -1
 min3 :: Integer -> Integer -> Integer -> Integer
 min3 x y z = x `min` y `min` z 
+
+-- === Ejercicio 11 
+
+type Altura = Float
+type Peso   = Float 
+
+-- | Recibe la altura de un pino y devuelve su peso.
+--
+-- La altura se calcula así: 3 kg x cm hasta 3 metros, 2 kg x cm arriba de los 3 metros.
+-- === Ejemplos
+--
+-- >>> pesoPino 200
+-- 600.0
+--
+-- >>> pesoPino 500
+-- 1300.0
+pesoPino :: Altura -> Peso 
+pesoPino alturaPino | alturaPino <= 300 = 3 * alturaPino
+                    | otherwise         = 3 * 300 + 2 * (alturaPino - 300)
+
+
+-- | Recibe un peso en kg y devuelve True si un pino de ese peso le sirve a la fábrica, y False en caso contrario.
+--
+-- A la fábrica le sirven árboles de entre 400 y 1000 kilos.
+-- === Ejemplos
+--
+-- >>> esPesoUtil 467
+-- True
+--
+-- >>> pesoPino 1234
+-- False 
+esPesoUtil :: Peso -> Bool 
+esPesoUtil pesoPino = pesoPino >= 400 && pesoPino <= 1000
+
+
+-- | Recibe la altura de un pino y devuelve True si un pino de ese peso le sirve a la fábrica, y False en caso contrario.
+--
+-- === Ejemplos
+--
+-- >>> sirvePino 467
+-- False 
+--
+-- >>> sirvePino 220
+-- True 
+sirvePino :: Altura -> Bool
+sirvePino = esPesoUtil . pesoPino
