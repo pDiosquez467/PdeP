@@ -254,3 +254,50 @@ esPesoUtil pesoPino = pesoPino >= 400 && pesoPino <= 1000
 -- True 
 sirvePino :: Altura -> Bool
 sirvePino = esPesoUtil . pesoPino
+
+
+-- === Ejercicio 12
+
+-- | Indica si el número dado es un cuadrado perfecto.
+--
+-- === Ejemplos
+--
+-- >>> esCuadradoPerfecto 16
+-- True
+--
+-- >>> esCuadradoPerfecto 23
+-- False
+esCuadradoPerfecto :: Integer -> Bool
+esCuadradoPerfecto n = menorCuadPerfectoDesde n 0 == n
+
+
+-- | Devuelve el menor cuadrado perfecto mayor o igual que el número dado, 
+-- | empezando a buscar desde un número entero específico.
+--
+-- === Ejemplos
+--
+-- >>> menorCuadPerfectoDesde 16 0
+-- 16
+--
+-- >>> menorCuadPerfectoDesde 23 0
+-- 25
+menorCuadPerfectoDesde :: Integer -> Integer -> Integer
+menorCuadPerfectoDesde n desde
+                            | cuadrado >= n = cuadrado
+                            | otherwise     = menorCuadPerfectoDesde n (desde + 1)
+                            where cuadrado = sumaImpares desde
+
+
+-- | Devuelve la suma de los primeros 'n' números impares.
+-- La suma de los primeros 'n' impares es igual a n^2.
+--
+-- === Ejemplos
+--
+-- >>> sumaImpares 2
+-- 4
+--
+-- >>> sumaImpares 10
+-- 100
+sumaImpares :: Integer -> Integer
+sumaImpares 0 = 0
+sumaImpares n = sumaImpares (n - 1) + (2 * n - 1)
