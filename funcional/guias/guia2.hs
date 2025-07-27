@@ -80,13 +80,13 @@ esNumeroPositivo = (> 0)
 --
 -- === Ejemplos
 --
--- >>> esMultiploDe 10 5
+-- >>> esMultiploDe 5 10
 -- True
 --
--- >>> esMultiploDe 7 3
+-- >>> esMultiploDe 3 7
 -- False
-esMultiploDe :: Int -> Int -> Bool 
-esMultiploDe n divisor = ((== 0) . (`mod` divisor)) n 
+esMultiploDe :: Integral a => a -> a -> Bool
+esMultiploDe divisor = (== 0) . (`mod` divisor)      
 
 -- | Indica si un número es múltiplo de 2.
 --
@@ -97,8 +97,8 @@ esMultiploDe n divisor = ((== 0) . (`mod` divisor)) n
 --
 -- >>> esMultiploDe2 5
 -- False
-esMultiploDe2 :: Int -> Bool 
-esMultiploDe2 = (`esMultiploDe` 2)
+esMultiploDe2 :: Integral a => a -> Bool 
+esMultiploDe2 = (esMultiploDe 2)
 
 -- | Indica si un año dado es bisiesto.
 --
@@ -115,7 +115,47 @@ esMultiploDe2 = (`esMultiploDe` 2)
 --
 -- >>> esBisiesto 2000
 -- True
-esBisiesto :: Int -> Bool 
-esBisiesto anio =
-  (anio `esMultiploDe` 400)
-  || ((anio `esMultiploDe` 4) && not (anio `esMultiploDe` 100))
+esBisiesto :: Integral a => a -> Bool 
+esBisiesto anio = esMultiploDe 400 anio || (esMultiploDe 4 anio && not (esMultiploDe 100 anio))
+
+
+-- | Devuelve el inverso multiplicativo de la raíz cuadrada de un número dado.
+--
+-- === Precondición
+-- El número debe ser estrictamente positivo.
+--
+-- === Ejemplos
+--
+-- >>> inversaRaizCuadrada 4
+-- 0.5
+--
+-- >>> inversaRaizCuadrada 1
+-- 1.0
+inversaRaizCuadrada :: Floating a => a -> a
+inversaRaizCuadrada = inverso . sqrt 
+
+-- | Dado un número @n@ y un incremento @m@, devuelve el resultado de 
+-- elevar al cuadrado @n@ y luego sumarle @m@.
+--
+-- === Ejemplos
+--
+-- >>> incrementMCuadradoN 3 2
+-- 11
+--
+-- >>> incrementMCuadradoN 5 1
+-- 26
+incrementMCuadradoN :: Num a => a -> a -> a
+incrementMCuadradoN m = (+m) . (^2)
+
+-- | Dado un número @n@ y un exponente @m@, indica si el resultado de 
+-- elevar @n@ a la potencia @m@ es un número par.
+--
+-- === Ejemplos
+--
+-- >>> esResultadoPar 2 5
+-- True
+--
+-- >>> esResultadoPar 3 2
+-- False
+esResultadoPar :: Int -> Int -> Bool  
+esResultadoPar n = esMultiploDe2 . (n^)
