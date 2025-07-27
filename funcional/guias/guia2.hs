@@ -75,3 +75,47 @@ triple = (* 3)
 -- False
 esNumeroPositivo :: (Num a, Ord a) => a -> Bool
 esNumeroPositivo = (> 0)
+
+-- | Indica si un número es múltiplo de otro.
+--
+-- === Ejemplos
+--
+-- >>> esMultiploDe 10 5
+-- True
+--
+-- >>> esMultiploDe 7 3
+-- False
+esMultiploDe :: Int -> Int -> Bool 
+esMultiploDe n divisor = ((== 0) . (`mod` divisor)) n 
+
+-- | Indica si un número es múltiplo de 2.
+--
+-- === Ejemplos
+--
+-- >>> esMultiploDe2 4
+-- True
+--
+-- >>> esMultiploDe2 5
+-- False
+esMultiploDe2 :: Int -> Bool 
+esMultiploDe2 = (`esMultiploDe` 2)
+
+-- | Indica si un año dado es bisiesto.
+--
+-- Un año es bisiesto si es divisible por 4, pero no por 100, 
+-- a menos que también sea divisible por 400.
+--
+-- === Ejemplos
+--
+-- >>> esBisiesto 2020
+-- True
+--
+-- >>> esBisiesto 1900
+-- False
+--
+-- >>> esBisiesto 2000
+-- True
+esBisiesto :: Int -> Bool 
+esBisiesto anio =
+  (anio `esMultiploDe` 400)
+  || ((anio `esMultiploDe` 4) && not (anio `esMultiploDe` 100))
