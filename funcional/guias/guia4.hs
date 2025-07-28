@@ -76,3 +76,19 @@ cuandoHizoMasLlamadas = obtenerInfoHorarios longitud
 longitud :: [a] -> Int
 longitud []     = 0
 longitud (_:xs) = 1 + longitud xs
+
+
+-- === Orden superior 
+
+-- | Dados un predicado y una lista de elementos devuelve True si existe algún elemento de la tupla que haga verdadera la función. 
+-- 
+-- === Ejemplos 
+-- 
+-- >>> existsAny even [1, 2, 3]
+-- True 
+--
+-- >>> existsAny (>0) [ -1, -9, -12]
+-- False
+existsAny :: (a -> Bool) -> [a] -> Bool 
+existsAny _ [] = False 
+existsAny pred (x : xs) = pred x || existsAny pred xs 
