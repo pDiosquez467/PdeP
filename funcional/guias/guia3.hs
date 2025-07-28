@@ -1,3 +1,5 @@
+-- === Ejercicio 1 
+
 -- | Devuelve el primer elemento de una tupla de tres componentes.
 --
 -- === Ejemplos
@@ -27,7 +29,7 @@ snd3 (_, x, _) = x
 trd3 :: (a, b, c) -> c 
 trd3 (_, _, x) = x 
 
-
+-- === Ejercicio 2 
 
 -- | Devuelve una tupla con el resultado de aplicar dos funciones distintas al mismo valor.
 --
@@ -41,6 +43,8 @@ trd3 (_, _, x) = x
 aplicar :: (a -> b, a -> c) -> a -> (b, c)
 aplicar (f, g) x = (f x, g x)
 
+
+-- === Ejercicio 3
 
 -- | Devuelve un número a partir de una tupla de dos enteros, de acuerdo a estas reglas:
 -- 
@@ -63,3 +67,63 @@ cuentaBizarra (num1, num2)
                         | num1 > num2      = num1 + num2
                         | num2 - num1 > 10 = num2 - num1
                         | otherwise        = num1 * num2
+
+-- === Ejercicio 4 
+
+type Nota = Int 
+
+
+-- | Indica si una nota es un bochazo (menor a 6).
+--
+-- === Ejemplos
+--
+-- >>> esNotaBochazo 4
+-- True
+--
+-- >>> esNotaBochazo 6
+-- False
+esNotaBochazo :: Nota -> Bool 
+esNotaBochazo = (<6)
+
+
+-- | Indica si un estudiante aprobó ambos parciales.
+--
+-- Un estudiante aprueba si ninguna de las dos notas es bochazo.
+--
+-- === Ejemplos
+--
+-- >>> aprobo (6, 7)
+-- True
+--
+-- >>> aprobo (4, 8)
+-- False
+aprobo :: (Nota, Nota) -> Bool
+aprobo (nota1, nota2) = not (esNotaBochazo nota1) && not (esNotaBochazo nota2) 
+
+
+-- | Indica si un estudiante promocionó la materia.
+--
+-- Se promociona si la suma de ambas notas es mayor a 15, y ambas son al menos 7.
+--
+-- === Ejemplos
+--
+-- >>> promociono (8, 8)
+-- True
+--
+-- >>> promociono (7, 6)
+-- False
+promociono :: (Nota, Nota) -> Bool
+promociono (nota1, nota2) = nota1 + nota2 > 15 && nota1 >= 7 && nota2 >= 7
+
+
+-- | Indica si se aprobó el primer parcial.
+--
+-- === Ejemplos
+--
+-- >>> aproboPrimerParcial (6, 3)
+-- True
+--
+-- >>> aproboPrimerParcial (4, 8)
+-- False
+aproboPrimerParcial :: (Nota, Nota) -> Bool
+aproboPrimerParcial = not . esNotaBochazo . fst
