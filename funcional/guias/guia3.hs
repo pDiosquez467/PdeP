@@ -70,6 +70,7 @@ cuentaBizarra (num1, num2)
 
 -- === Ejercicio 4 
 
+-- | Tipo sinónimo para representar notas, que son números enteros.
 type Nota = Int 
 
 
@@ -127,6 +128,51 @@ promociono (nota1, nota2) = nota1 + nota2 > 15 && nota1 >= 7 && nota2 >= 7
 -- False
 aproboPrimerParcial :: (Nota, Nota) -> Bool
 aproboPrimerParcial = not . esNotaBochazo . fst
+
+
+-- Ejercicio 5 
+
+
+-- | Calcula las notas finales de un alumno tomando el máximo entre el parcial y el recuperatorio.
+--
+--   Si no rindió el recuperatorio, se usa el valor del parcial.
+--
+--  === Ejemplo
+-- >>> notasFinales ((2,7),(6,-1)) 
+-- (6,7)
+notasFinales :: ((Nota, Nota), (Nota, Nota)) -> (Nota, Nota)
+notasFinales ((parcial1, parcial2), (recup1, recup2)) = (max parcial1 recup1, max parcial2 recup2)
+
+
+-- | Determina si un alumno recursa, dado el par de parciales y recuperatorios.
+--
+--   Recursa si no aprueba con sus notas finales.
+recursa :: ((Nota, Nota), (Nota, Nota)) -> Bool
+recursa = (not . aprobo . notasFinales)
+
+
+-- | Determina si un alumno recuperó el primer parcial.
+--
+--   Se considera que lo recuperó si no aprobaba el primer parcial y sí aprueba la nota final del primero.
+recuperoPrimerParcial :: ((Nota, Nota), (Nota, Nota)) -> Bool
+recuperoPrimerParcial = rindio . fst . snd
+
+
+-- | Indica si un alumno rindió al menos uno de los recuperatorios.
+--
+--   Devuelve True si alguno de los recuperatorios es distinto de -1.
+rindioAlMenosUnRecup :: ((Nota, Nota), (Nota, Nota)) -> Bool
+rindioAlMenosUnRecup = \examenes -> (rindio . fst . snd) examenes || (rindio . snd . snd) examenes
+
+-- | Determina si un alumno, pudiendo promocionar con los parciales, rindió al menos un recuperatorio.
+--
+--   Es decir, si promocionaba pero aún así se presentó a algún recuperatorio.
+recuperoDeGusto :: ((Nota, Nota), (Nota, Nota)) -> Bool
+recuperoDeGusto examenes = promociono (notasFinales examenes) && rindioAlMenosUnRecup examenes
+
+-- | Determina si una nota representa que se rindió (es decir, si es distinta de -1).
+rindio :: Nota -> Bool
+rindio = (/= -1)
 
 
 -- === Ejercicio 6 
