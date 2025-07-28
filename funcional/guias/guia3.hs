@@ -127,3 +127,24 @@ promociono (nota1, nota2) = nota1 + nota2 > 15 && nota1 >= 7 && nota2 >= 7
 -- False
 aproboPrimerParcial :: (Nota, Nota) -> Bool
 aproboPrimerParcial = not . esNotaBochazo . fst
+
+
+-- === Ejercicio 6 
+
+type Nombre = String 
+type Edad = Int
+
+
+-- | Indica si la persona dada es mayor de edad.
+--
+-- Una persona es mayor de edad si tiene más de 21 años.
+--
+-- === Ejemplos
+--
+-- >>> esMayorDeEdad ("Lio", 37)
+-- True
+--
+-- >>> esMayorDeEdad ("Tommi", 16)
+-- False  
+esMayorDeEdad :: (Nombre, Edad) -> Bool
+esMayorDeEdad = (>=21) . snd  
