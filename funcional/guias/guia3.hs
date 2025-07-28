@@ -148,3 +148,43 @@ type Edad = Int
 -- False  
 esMayorDeEdad :: (Nombre, Edad) -> Bool
 esMayorDeEdad = (>=21) . snd  
+
+
+-- === Ejercicio 7 
+
+-- | Duplica el número si es par, si no lo deja igual.
+--
+-- >>> duplicarSiEsPar 4
+-- 8
+-- >>> duplicarSiEsPar 3
+-- 3
+duplicarSiEsPar :: Int -> Int
+duplicarSiEsPar n | even n    = 2 * n
+                  | otherwise = n
+
+
+-- | Suma 1 si el número es impar, si no lo deja igual.
+--
+-- >>> sumarUnoSiEsImpar 5
+-- 6
+-- >>> sumarUnoSiEsImpar 8
+-- 8
+sumarUnoSiEsImpar :: Int -> Int
+sumarUnoSiEsImpar n | odd n     = n + 1
+                    | otherwise = n
+
+
+-- | Dada una tupla de dos enteros, aplica:
+-- - al primero: duplicarlo si es par,
+-- - al segundo: sumarle 1 si es impar.
+--
+-- Usa aplicación parcial y composición con `aplicar`.
+--
+-- === Ejemplos
+-- >>> calcular (4, 5)
+-- (8, 6)
+--
+-- >>> calcular (3, 7)
+-- (3, 8)
+calcular :: (Int, Int) -> (Int, Int)
+calcular = aplicar (duplicarSiEsPar . fst , sumarUnoSiEsImpar . snd)
