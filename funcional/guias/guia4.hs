@@ -80,15 +80,58 @@ longitud (_:xs) = 1 + longitud xs
 
 -- === Orden superior 
 
--- | Dados un predicado y una lista de elementos devuelve True si existe algún elemento de la tupla que haga verdadera la función. 
--- 
--- === Ejemplos 
--- 
--- >>> existsAny even [1, 2, 3]
--- True 
+-- | Dados un predicado y una lista, devuelve True si existe al menos un elemento 
+-- | que cumple con el predicado.
 --
--- >>> existsAny (>0) [ -1, -9, -12]
+-- === Ejemplos
+--
+-- >>> existsAny even [1, 2, 3]
+-- True
+--
+-- >>> existsAny (>0) [-1, -9, -12]
 -- False
 existsAny :: (a -> Bool) -> [a] -> Bool 
 existsAny _ [] = False 
 existsAny pred (x : xs) = pred x || existsAny pred xs 
+
+
+-- | Recibe dos funciones y un valor, y devuelve el mayor de los resultados de aplicar 
+-- ambas funciones al valor dado.
+--
+-- === Ejemplos
+--
+-- >>> mejor cuadrado triple 1
+-- 3
+--
+-- >>> mejor cuadrado triple 5
+-- 25
+--
+-- Donde:
+-- cuadrado x = x * x
+-- triple x = 3 * x
+mejor :: Ord a => (t -> a) -> (t -> a) -> t -> a
+mejor f g x = max (f x) (g x)
+
+
+-- | Recibe una función y una lista, y devuelve una nueva lista donde cada elemento 
+-- es el resultado de aplicar la función a cada elemento de la lista original.
+--
+-- === Ejemplos
+--
+-- >>> aplicar (*2) [1,2,3]
+-- [2,4,6]
+aplicar :: (a -> b) -> [a] -> [b]
+aplicar _ [] = [] 
+aplicar f (x:xs) = f x : aplicar f xs 
+
+
+-- | Recibe dos funciones y una lista, y devuelve una lista de pares. 
+-- Cada par contiene el resultado de aplicar ambas funciones al mismo elemento.
+--
+-- === Ejemplos
+--
+-- >>> parDeFns even (*2) [12, 3]
+-- [(True,24),(False,6)]
+parDeFns :: (a -> b) -> (a -> c) -> [a] -> [(b, c)]
+parDeFns _ _ [] = []
+parDeFns f g (x : xs) = (f x, g x) : parDeFns f g xs 
