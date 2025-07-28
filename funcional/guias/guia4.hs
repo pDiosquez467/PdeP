@@ -135,3 +135,9 @@ aplicar f (x:xs) = f x : aplicar f xs
 parDeFns :: (a -> b) -> (a -> c) -> [a] -> [(b, c)]
 parDeFns _ _ [] = []
 parDeFns f g (x : xs) = (f x, g x) : parDeFns f g xs 
+
+
+-- | Recibe un número y una lista y devuelve True si el número es múltiplo de alguno de los 
+-- | número de la lista.
+esMultiploDeAlguno :: Int -> [Int] -> Bool 
+esMultiploDeAlguno d ns = any ((==0) . (d `mod`)) ns  
