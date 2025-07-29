@@ -354,3 +354,18 @@ primerosDivisores x = takeWhile ((== 0) . flip mod x)
 -- [8,9]
 primerosNoDivisores :: Int -> [Int] -> [Int]
 primerosNoDivisores x = takeWhile ((/= 0) . flip mod x)
+
+
+-- === Ejercicio 16 
+
+-- | Indica si hubo algún mes en el que los ingresos netos (ingreso - egreso) superaron un valor dado.
+--
+-- === Ejemplos
+--
+-- >>> huboMesMejorDe [1..12] [12,11..1] 10
+-- True
+--
+-- >>> huboMesMejorDe [1,2,3] [1,2,3] 0
+-- False
+huboMesMejorDe :: [Int] -> [Int] -> Int -> Bool 
+huboMesMejorDe ingresos egresos valor = any (>valor) (zipWith (-) ingresos egresos)
