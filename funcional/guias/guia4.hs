@@ -246,6 +246,7 @@ sumaF :: Num a => [a -> a] -> a -> a
 sumaF fs x = sum (map ($ x) fs)  
 
 
+-- === Ejercicio 12 
 
 -- | Aumenta la habilidad de cada jugador en una cantidad dada, sin que
 --   ninguna habilidad final supere el valor máximo de 12.
@@ -265,6 +266,61 @@ sumaF fs x = sum (map ($ x) fs)
 -- [12,12]
 subirHabilidad :: Int -> [Int] -> [Int]
 subirHabilidad x = map (min 12 . (+x))
+
+
+-- === Ejercicio 13 
+
+-- | Aplica una función a un número entero y garantiza que el resultado esté en el rango [0, 12].
+--
+-- La función `flimitada` toma una función `f` de tipo `(Int -> Int)` y un entero `n`, y devuelve
+-- el valor de `f n` limitado inferiormente por 0 y superiormente por 12. Esto significa que:
+-- - Si `f n < 0`, devuelve 0.
+-- - Si `f n > 12`, devuelve 12.
+-- - Si `f n` está entre 0 y 12 inclusive, devuelve `f n`.
+--
+-- === Ejemplos
+--
+-- >>> flimitada (*2) 9
+-- 12   
+--
+-- >>> flimitada (+(-4)) 3
+-- 0    
+--
+-- >>> flimitada (*2) 5
+-- 10   
+flimitada :: (Int -> Int) -> Int -> Int
+flimitada f = max 0 . min 12 . f
+
+
+-- | Aplica una transformación a cada habilidad en una lista, limitando cada resultado al rango [0, 12].
+--
+-- La función `cambiarHabilidad` toma como entrada una función `f` de tipo `(Int -> Int)` y una lista
+-- de habilidades (enteros), y devuelve una nueva lista donde a cada habilidad se le aplica `f` con
+-- la garantía de que el resultado se encuentra en el rango permitido [0, 12] gracias a `flimitada`.
+--
+-- Internamente, aplica `flimitada f` a cada elemento de la lista usando `map`.
+--
+-- === Ejemplos
+--
+-- >>> cambiarHabilidad (*2) [2,4,6,8,10]
+-- [4,8,12,12,12] 
+cambiarHabilidad :: (Int -> Int) -> [Int] -> [Int]
+cambiarHabilidad f = map (flimitada f)
+
+
+-- | Ajusta las habilidades de los jugadores elevando a 4 aquellas que sean menores a ese valor.
+--
+-- La función `ajustarHabilidad` se define como un caso particular de `cambiarHabilidad`, usando
+-- como transformación la función `(max 4)`, que eleva a 4 cualquier número menor a 4, y deja sin
+-- cambios los que ya son 4 o más. A su vez, esta transformación pasa por `flimitada`, que asegura
+-- que ningún valor supere 12.
+--
+-- === Ejemplos
+--
+-- >>> ajustarHabilidad [2, 4, 5, 3, 8]
+-- [4, 4, 5, 4, 8]
+ajustarHabilidad :: [Int] -> [Int]
+ajustarHabilidad = cambiarHabilidad (max 4)
 
 
 -- === Ejercicio 15
