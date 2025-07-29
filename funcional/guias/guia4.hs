@@ -369,3 +369,33 @@ primerosNoDivisores x = takeWhile ((/= 0) . flip mod x)
 -- False
 huboMesMejorDe :: [Int] -> [Int] -> Int -> Bool 
 huboMesMejorDe ingresos egresos valor = any (>valor) (zipWith (-) ingresos egresos)
+
+
+-- === Ejercicio 19 
+
+-- | Devuelve la suma de los números de la lista.
+--
+-- === Ejemplos 
+--
+-- >>> suma [1 .. 100]
+-- 5050
+--
+-- >>> suma [-1, 4, 0]
+-- 3
+sumaFold :: Num a => [a] -> a 
+sumaFold = foldr (\ numero acum -> numero + acum) 0
+
+
+-- === Ejercicio 20 
+
+-- | Devuelve el producto de los números de la lista.
+--
+-- === Ejemplos 
+--
+-- >>> productoria [1 .. 5]
+-- 120
+--
+-- >>> productoria [-1, 4, 2]
+-- -8
+productoria :: Num a => [a] -> a 
+productoria = foldr (\ numero acum -> numero * acum) 1 
