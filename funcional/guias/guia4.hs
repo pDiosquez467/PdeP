@@ -125,19 +125,41 @@ aplicar _ [] = []
 aplicar f (x:xs) = f x : aplicar f xs 
 
 
--- | Recibe dos funciones y una lista, y devuelve una lista de pares. 
--- Cada par contiene el resultado de aplicar ambas funciones al mismo elemento.
+-- | Recibe un número y una lista de enteros, y devuelve True si el número es múltiplo
+--   de al menos uno de los elementos de la lista.
 --
 -- === Ejemplos
 --
--- >>> parDeFns even (*2) [12, 3]
--- [(True,24),(False,6)]
-parDeFns :: (a -> b) -> (a -> c) -> [a] -> [(b, c)]
-parDeFns _ _ [] = []
-parDeFns f g (x : xs) = (f x, g x) : parDeFns f g xs 
-
-
--- | Recibe un número y una lista y devuelve True si el número es múltiplo de alguno de los 
--- | número de la lista.
+-- >>> esMultiploDeAlguno 10 [2, 3, 5]
+-- True
+--
+-- >>> esMultiploDeAlguno 7 [2, 4, 6]
+-- False
 esMultiploDeAlguno :: Int -> [Int] -> Bool 
-esMultiploDeAlguno d ns = any ((==0) . (d `mod`)) ns  
+esMultiploDeAlguno d ns = any ((== 0) . (d `mod`)) ns
+
+
+-- | Dada una lista de listas de notas, devuelve la lista de promedios correspondientes
+--   a cada sublista. El promedio se calcula como la suma de las notas dividida por la cantidad.
+--
+-- === Ejemplos
+--
+-- >>> promedios [[8,6], [7,9,4], [6,2,4], [9,6]]
+-- [7.0, 6.6666665, 4.0, 7.5]
+promedios :: [[Float]] -> [Float]
+promedios = map (\notas -> sum notas / fromIntegral (longitud notas))
+
+
+
+-- | Dada una lista de listas de notas, elimina los aplazos (notas menores o iguales a 4)
+--   de cada sublista antes de calcular los promedios. Devuelve la lista de promedios sin contar los aplazos.
+--
+-- === Ejemplos
+--
+-- >>> promedioSinAplazos [[8,6], [7,9,4], [6,2,4], [9,6]]
+-- [7.0, 8.0, 6.0, 7.5]
+--
+-- En el segundo caso, [7,9,4] se transforma en [7,9] antes de calcular el promedio.
+-- En el tercero, [6,2,4] se convierte en [6].
+promedioSinAplazos :: [[Float]] -> [Float]
+promedioSinAplazos = promedios . map (filter (> 4))
