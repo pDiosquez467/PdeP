@@ -266,3 +266,35 @@ sumaF fs x = sum (map ($ x) fs)
 subirHabilidad :: Int -> [Int] -> [Int]
 subirHabilidad x = map (min 12 . (+x))
 
+
+-- === Ejercicio 15
+
+-- | Recibe una lista de números y devuelve una nueva lista con todos los números hasta el primer impar.
+--
+-- === Ejemplos
+--
+-- >>> primerosPares [2, 4, 10, 7, 22, 8]
+-- [2, 4, 10]
+primerosPares :: [Int] -> [Int]
+primerosPares = takeWhile even 
+
+-- | Recibe una lista de números y un número n, y devuelve la sublista hasta el primer número que no
+--   es divisor de n exclusive.
+--
+-- === Ejemplos
+--
+-- >>> primerosDivisores 60 [4,12,3,8,2,9,6] 
+-- [4,12,3]
+primerosDivisores :: Int -> [Int] -> [Int]
+primerosDivisores x = takeWhile ((== 0) . flip mod x)
+
+
+-- | Recibe una lista de números y un número n, y devuelve la sublista hasta el primer número que sí
+--   es divisor de n exclusive. 
+-- 
+-- === Ejemplos
+--
+-- >>> primerosNoDivisores 60 [8,9,4,12,3,8,2,9,6] 
+-- [8,9]
+primerosNoDivisores :: Int -> [Int] -> [Int]
+primerosNoDivisores x = takeWhile ((/= 0) . flip mod x)
