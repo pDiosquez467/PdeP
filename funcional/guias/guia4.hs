@@ -245,3 +245,24 @@ aplicarFunciones fs x = map ($ x) fs  -- ($ x) es una función parcial, que espe
 sumaF :: Num a => [a -> a] -> a -> a 
 sumaF fs x = sum (map ($ x) fs)  
 
+
+
+-- | Aumenta la habilidad de cada jugador en una cantidad dada, sin que
+--   ninguna habilidad final supere el valor máximo de 12.
+--
+-- Cada elemento de la lista representa la habilidad de un jugador.
+-- Si al sumarle el aumento se pasa de 12, se ajusta automáticamente a 12.
+--
+-- === Ejemplos
+--
+-- >>> subirHabilidad 2 [3,6,9,10,11,12]
+-- [5,8,11,12,12,12]
+--
+-- >>> subirHabilidad 0 [1,2,3]
+-- [1,2,3]
+--
+-- >>> subirHabilidad 5 [10,11]
+-- [12,12]
+subirHabilidad :: Int -> [Int] -> [Int]
+subirHabilidad x = map (min 12 . (+x))
+
