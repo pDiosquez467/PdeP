@@ -163,3 +163,73 @@ promedios = map (\notas -> sum notas / fromIntegral (longitud notas))
 -- En el tercero, [6,2,4] se convierte en [6].
 promedioSinAplazos :: [[Float]] -> [Float]
 promedioSinAplazos = promedios . map (filter (> 4))
+
+
+-- | Dada la lista de las notas de un alumno devuelve True si el alumno aprobó.
+--
+-- Se dice que un alumno aprobó si todas sus notas son 6 o más. 
+--
+-- === Ejemplos
+--
+-- >>> aprobo [8,6,2,4] 
+-- False 
+-- >>> aprobo [7,9,6,8] 
+-- True 
+aprobo :: [Float] -> Bool 
+aprobo = all (>6)
+
+
+-- | Devuelve las notas de los alumnos que aprobaron.
+--
+-- === Ejemplos
+--
+-- >>> aprobaron [[8,6,2,4],[7,9,6,7],[6,2,4,2],[9,6,7,10]] 
+-- [[7,9,6,7], [9,6,7,10]] 
+-- aprobaron :: [[Float]] -> [[Float]]
+
+
+-- | Devuelve la lista de los divisores del número dado.
+--
+-- Precondición == El número dado debe ser > 0.
+--
+-- === Ejemplos
+-- 
+-- >>> divisores 60
+-- [1,2,3,4,5,6,10,12,15,20,30,60]
+divisores :: Integral a => a -> [a]
+divisores n = filter ((==0) . (n `mod` )) [1 .. n] 
+
+
+-- | Dada una función booleana y una lista, devuelve 'True' si la función devuelve 'True'
+--   para al menos un elemento de la lista.
+--
+-- === Ejemplos
+--
+-- >>> exists even [1,3,5]
+-- False
+--
+-- >>> exists even [1,4,7]
+-- True
+exists :: (a -> Bool) -> [a] -> Bool
+exists pred = (> 0) . longitud . filter pred
+
+
+-- | Dada una lista de números devuelve True si hay algún número negativo. 
+--
+-- === Ejemplos
+--
+-- >>> hayAlgunNegativo [2,-3,9] 
+-- True
+hayAlgunNegativo :: (Num a, Ord a) => [a] -> Bool 
+hayAlgunNegativo = exists (<0)
+
+
+-- | Dadas una lista de funciones y un valor cualquiera, devuelve la lista que resulta de aplicar
+--   las funciones al valor.
+--
+-- === Ejemplos
+--
+-- >>> aplicarFunciones[(*4),(+3),abs] (-8) 
+-- [-32,-5,8] 
+aplicarFunciones :: [a -> b] -> a -> [b]
+aplicarFunciones fs x = map ($ x) fs  -- ($ x) es una función parcial, que espera una función f y le aplica x.
