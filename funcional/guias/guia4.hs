@@ -233,3 +233,15 @@ hayAlgunNegativo = exists (<0)
 -- [-32,-5,8] 
 aplicarFunciones :: [a -> b] -> a -> [b]
 aplicarFunciones fs x = map ($ x) fs  -- ($ x) es una función parcial, que espera una función f y le aplica x.
+
+
+-- | Dadas una lista de funciones y un número, devuelve la suma del resultado de aplicar las funciones
+--   al número. 
+--
+-- === Ejemplos
+--
+-- >>> sumaF[(*4),(+3),abs] (-8) 
+-- -29 
+sumaF :: Num a => [a -> a] -> a -> a 
+sumaF fs x = sum (map ($ x) fs)  
+
