@@ -70,3 +70,9 @@ minimoNivel = minimum . niveles
 
 nivelesMayoresA :: Int -> (Persona -> Int) 
 nivelesMayoresA valor = length . filter (>valor ) . niveles
+
+-- 2. Definir la función efectosDePocion que dada una poción devuelve una lista con los efectos
+-- de todos sus ingredientes.
+
+efectosDePocion :: Pocion -> [Efecto]
+efectosDePocion = concat . map efectos . ingredientes 
