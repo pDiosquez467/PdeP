@@ -1,6 +1,6 @@
 
 --------------------
--- === Definiciones 
+-- === Estructuras 
 --------------------
 
 data Persona = Persona {
@@ -52,3 +52,21 @@ maximoSegun  f ( x : y : xs)
 --    diferenciaDeNiveles es la diferencia entre el nivel más alto y más bajo.
 --    nivelesMayoresA n, que indica la cantidad de niveles de la persona que están por encima
 --    del valor dado.
+
+niveles :: Persona -> [Int]
+niveles persona = [suerte persona, inteligencia persona, fuerza persona]
+
+sumaDeNiveles :: Persona -> Int 
+sumaDeNiveles = sum . niveles
+
+diferenciaDeNiveles :: Persona -> Int 
+diferenciaDeNiveles persona = maximoNivel persona - minimoNivel persona
+
+maximoNivel :: Persona -> Int 
+maximoNivel = maximum . niveles
+
+minimoNivel :: Persona -> Int 
+minimoNivel = minimum . niveles
+
+nivelesMayoresA :: Int -> (Persona -> Int) 
+nivelesMayoresA valor = length . filter (>valor ) . niveles
