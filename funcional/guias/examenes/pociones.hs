@@ -108,7 +108,8 @@ todasDulces = all (any ((== "azúcar") . nombreIngrediente) . ingredientes)
 -- efectos de esta última, en orden.
 
 tomarPocion :: Pocion -> Persona -> Persona
-tomarPocion pocion persona = foldr (\ efecto acum -> efecto acum) persona (efectosDePocion pocion)
+tomarPocion pocion persona = 
+  (foldl (\ persona efecto -> efecto persona) persona . efectosDePocion) pocion
 
 -- 5. Definir la función esAntidotoDe que recibe dos pociones y una persona, y dice si tomar la 
 -- segunda poción revierte los cambios que se producen en la persona al tomar la primera.
