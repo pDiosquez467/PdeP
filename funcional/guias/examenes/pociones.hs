@@ -76,3 +76,18 @@ nivelesMayoresA valor = length . filter (>valor ) . niveles
 
 efectosDePocion :: Pocion -> [Efecto]
 efectosDePocion = concat . map efectos . ingredientes 
+
+-- 3. Dada una lista de pociones, consultar:
+  -- a. Los nombres de las pociones hardcore, que son las que tienen al menos 4 efectos.
+
+  -- b. La cantidad de pociones prohibidas, que son aquellas que tienen algún ingrediente cuyo
+  --    nombre figura en la lista de ingredientes prohibidos.
+
+  -- c. Si son todas dulces, lo cual ocurre cuando todas las pociones de la lista tienen algún
+  --   ingrediente llamado “azúcar”.
+
+pocionesHardcore :: [Pocion] -> [String]
+pocionesHardcore  = map nombrePocion . filter esHardcore
+
+esHardcore :: Pocion -> Bool 
+esHardcore = (>=4) . length . concat . map efectos . ingredientes
