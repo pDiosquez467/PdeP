@@ -88,28 +88,30 @@ efectosDePocion = concat . map efectos . ingredientes
 
 -- a .
 pocionesHardcore :: [Pocion] -> [String]
-pocionesHardcore  = map nombrePocion . filter esHardcore
+pocionesHardcore  = map nombrePocion . filter ((>=4) . length . efectosDePocion)
 
-esHardcore :: Pocion -> Bool 
-esHardcore = (>=4) . length . concat . map efectos . ingredientes
 
 -- b.
 cantidadPocionesProhibidas :: [Pocion] -> Int 
 cantidadPocionesProhibidas = length . filter esProhibida
 
 esProhibida :: Pocion -> Bool
-esProhibida = any ( `elem` nombresDeIngredientesProhibidos) . map nombreIngrediente . ingredientes
+esProhibida = any (( `elem` nombresDeIngredientesProhibidos) . nombreIngrediente) . ingredientes
 
 -- c.
 todasDulces :: [Pocion] -> Bool 
-todasDulces = all tieneAzucar 
+todasDulces = all (any ((== "azúcar") . nombreIngrediente) . ingredientes) 
 
-tieneAzucar :: Pocion -> Bool 
-tieneAzucar = any (=="azúcar") . map nombreIngrediente . ingredientes
 
 -- 4. Definir la función tomarPocion que recibe una poción y una persona, y devuelve como quedaría
 -- la persona después de tomar la poción. Cuando una persona toma una poción, se aplican todos los
 -- efectos de esta última, en orden.
 
 tomarPocion :: Pocion -> Persona -> Persona
-tomarPocion pocion persona = foldr (\ efecto acum -> efecto acum) persona (efectosDePocion pocion)   
+tomarPocion pocion persona = foldr (\ efecto acum -> efecto acum) persona (efectosDePocion pocion)
+
+-- 5. Definir la función esAntidotoDe que recibe dos pociones y una persona, y dice si tomar la 
+-- segunda poción revierte los cambios que se producen en la persona al tomar la primera.
+
+esAntidotoDe :: Pocion -> Pocion -> Persona -> Bool 
+esAntidotoDe pocion1 pocion2 persona = (== persona) (tomarPocion pocion2 (tomarPocion pocion1 persona))
