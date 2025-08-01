@@ -86,8 +86,23 @@ efectosDePocion = concat . map efectos . ingredientes
   -- c. Si son todas dulces, lo cual ocurre cuando todas las pociones de la lista tienen algún
   --   ingrediente llamado “azúcar”.
 
+-- a .
 pocionesHardcore :: [Pocion] -> [String]
 pocionesHardcore  = map nombrePocion . filter esHardcore
 
 esHardcore :: Pocion -> Bool 
 esHardcore = (>=4) . length . concat . map efectos . ingredientes
+
+-- b.
+cantidadPocionesProhibidas :: [Pocion] -> Int 
+cantidadPocionesProhibidas = length . filter esProhibida
+
+esProhibida :: Pocion -> Bool
+esProhibida = any ( `elem` nombresDeIngredientesProhibidos) . map nombreIngrediente . ingredientes
+
+-- c.
+todasDulces :: [Pocion] -> Bool 
+todasDulces = all tieneAzucar 
+
+tieneAzucar :: Pocion -> Bool 
+tieneAzucar = any (=="azúcar") . map nombreIngrediente . ingredientes
