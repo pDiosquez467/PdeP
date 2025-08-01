@@ -106,3 +106,10 @@ todasDulces = all tieneAzucar
 
 tieneAzucar :: Pocion -> Bool 
 tieneAzucar = any (=="azúcar") . map nombreIngrediente . ingredientes
+
+-- 4. Definir la función tomarPocion que recibe una poción y una persona, y devuelve como quedaría
+-- la persona después de tomar la poción. Cuando una persona toma una poción, se aplican todos los
+-- efectos de esta última, en orden.
+
+tomarPocion :: Pocion -> Persona -> Persona
+tomarPocion pocion persona = foldr (\ efecto acum -> efecto acum) persona (efectosDePocion pocion)   
