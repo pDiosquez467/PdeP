@@ -116,3 +116,11 @@ tomarPocion pocion persona =
 
 esAntidotoDe :: Pocion -> Pocion -> Persona -> Bool 
 esAntidotoDe pocion antidoto persona = ((== persona) . tomarPocion antidoto . tomarPocion pocion) persona 
+
+-- 6. Definir la función personaMasAfectada que recibe una poción, una función cuantificadora
+-- (es decir, una función que dada una persona retorna un número) y una lista de personas, y 
+-- devuelve a la persona de la lista que hace máxima el valor del cuantificador. 
+-- Mostrar un ejemplo de uso utilizando los cuantificadores definidos en el punto 1.
+
+personaMasAfectada :: Pocion -> (Persona -> Int) -> ([Persona] -> Persona)
+personaMasAfectada pocion criterio = maximoSegun (criterio . tomarPocion pocion)
