@@ -115,4 +115,4 @@ tomarPocion pocion persona =
 -- segunda poción revierte los cambios que se producen en la persona al tomar la primera.
 
 esAntidotoDe :: Pocion -> Pocion -> Persona -> Bool 
-esAntidotoDe pocion1 pocion2 persona = (== persona) (tomarPocion pocion2 (tomarPocion pocion1 persona))
+esAntidotoDe pocion antidoto persona = ((== persona) . tomarPocion antidoto . tomarPocion pocion) persona 
