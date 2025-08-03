@@ -81,3 +81,10 @@ aumentaTonificacion gimnasta = (> (tonificacion gimnasta)) . tonificacion . real
 
 nombresRutinasHardCore :: Gimnasta -> ([Rutina] -> [String])
 nombresRutinasHardCore gimnasta = map nombreRutina . filter (aumentaTonificacion gimnasta) 
+
+-- c.
+esPeligrosaPara :: Gimnasta -> (Rutina -> Bool)
+esPeligrosaPara gimnasta = (< peso gimnasta `div` 2) . peso . realizarRutina gimnasta
+
+hayAlgunaPeligrosa :: Gimnasta -> ([Rutina] -> Bool) 
+hayAlgunaPeligrosa gimnasta = any (esPeligrosaPara gimnasta)
