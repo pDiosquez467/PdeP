@@ -60,6 +60,7 @@ montaña inclinacion tiempo =
 -- total de la rutina en partes iguales. Mostrar un ejemplo de uso con una rutina que incluya
 -- todos los ejercicios del punto anterior.
 
-realizarRutina :: Rutina -> (Gimnasta -> Gimnasta)
-realizarRutina rutina gimnasta =  
-    foldr (\ ejercicio gimnasta -> ejercicio (duracionTotal rutina `div` length (ejercicios rutina)) gimnasta ) gimnasta (ejercicios rutina)
+realizarRutina :: Gimnasta -> Rutina -> Gimnasta
+realizarRutina gimnastaInit rutina =  
+    let tiempoAsignado = duracionTotal rutina `div` length (ejercicios rutina)
+    in foldl (\ gimnasta ejercicio -> ejercicio tiempoAsignado gimnasta) gimnastaInit (ejercicios rutina)
