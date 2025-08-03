@@ -62,5 +62,8 @@ montaña inclinacion tiempo =
 
 realizarRutina :: Gimnasta -> Rutina -> Gimnasta
 realizarRutina gimnastaInit rutina =  
-    let tiempoAsignado = duracionTotal rutina `div` length (ejercicios rutina)
-    in foldl (\ gimnasta ejercicio -> ejercicio tiempoAsignado gimnasta) gimnastaInit (ejercicios rutina)
+    foldl (\ gimnasta ejercicio -> ejercicio (tiempoEjercicio rutina) gimnasta) gimnastaInit (ejercicios rutina)
+
+tiempoEjercicio :: Rutina -> Tiempo
+tiempoEjercicio rutina = duracionTotal rutina `div` length (ejercicios rutina)
+
