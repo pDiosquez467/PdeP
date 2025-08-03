@@ -74,15 +74,5 @@ tiempoEjercicio rutina = duracionTotal rutina `div` length (ejercicios rutina)
 
 -- a.
 
-cantidadEjercicios :: Rutina -> Int
-cantidadEjercicios = length . ejercicios
-
-rutinaConMasEjercicios :: [Rutina] -> Rutina
-rutinaConMasEjercicios rutinas = foldr1 (\ rutina otra -> maximaRutina rutina otra) rutinas
-
-maximaRutina :: Rutina -> Rutina -> Rutina
-maximaRutina rutina otra | cantidadEjercicios rutina > cantidadEjercicios otra = rutina
-                         | otherwise                                           = otra 
-
-cantidadEjerciciosRutinaMaxima :: [Rutina] -> Int 
-cantidadEjerciciosRutinaMaxima = cantidadEjercicios . rutinaConMasEjercicios
+mayorCantidadDeEjercicios :: [Rutina] -> Int
+mayorCantidadDeEjercicios = maximum . map (length . ejercicios)
