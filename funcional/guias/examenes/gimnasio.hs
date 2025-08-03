@@ -57,8 +57,7 @@ montaña inclinacion tiempo =
 
 -- 3. Implementar una función realizarRutina, que dada una rutina y un gimnasta retorna el 
 -- gimnasta resultante de realizar todos los ejercicios de la rutina, repartiendo el tiempo
--- total de la rutina en partes iguales. Mostrar un ejemplo de uso con una rutina que incluya
--- todos los ejercicios del punto anterior.
+-- total de la rutina en partes iguales.
 
 realizarRutina :: Gimnasta -> Rutina -> Gimnasta
 realizarRutina gimnastaInit rutina =  
@@ -73,6 +72,12 @@ tiempoEjercicio rutina = duracionTotal rutina `div` length (ejercicios rutina)
     -- c. ¿Hay alguna rutina peligrosa para cierto gimnasta? Decimos que una rutina es peligrosa para alguien si lo hace perder más de la mitad de su peso.
 
 -- a.
-
 mayorCantidadDeEjercicios :: [Rutina] -> Int
 mayorCantidadDeEjercicios = maximum . map (length . ejercicios)
+
+-- b.
+aumentaTonificacion :: Gimnasta -> (Rutina -> Bool) 
+aumentaTonificacion gimnasta = (> (tonificacion gimnasta)) . tonificacion . realizarRutina gimnasta
+
+nombresRutinasHardCore :: Gimnasta -> ([Rutina] -> [String])
+nombresRutinasHardCore gimnasta = map nombreRutina . filter (aumentaTonificacion gimnasta) 
