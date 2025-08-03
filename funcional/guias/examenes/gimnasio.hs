@@ -67,3 +67,22 @@ realizarRutina gimnastaInit rutina =
 tiempoEjercicio :: Rutina -> Tiempo
 tiempoEjercicio rutina = duracionTotal rutina `div` length (ejercicios rutina)
 
+-- 4. Definir las operaciones necesarias para hacer las siguientes consultas a partir de una lista de rutinas:
+    -- a. ¿Qué cantidad de ejercicios tiene la rutina con más ejercicios?
+    -- b. ¿Cuáles son los nombres de las rutinas que hacen que un gimnasta dado gane tonificación?
+    -- c. ¿Hay alguna rutina peligrosa para cierto gimnasta? Decimos que una rutina es peligrosa para alguien si lo hace perder más de la mitad de su peso.
+
+-- a.
+
+cantidadEjercicios :: Rutina -> Int
+cantidadEjercicios = length . ejercicios
+
+rutinaConMasEjercicios :: [Rutina] -> Rutina
+rutinaConMasEjercicios rutinas = foldr1 (\ rutina otra -> maximaRutina rutina otra) rutinas
+
+maximaRutina :: Rutina -> Rutina -> Rutina
+maximaRutina rutina otra | cantidadEjercicios rutina > cantidadEjercicios otra = rutina
+                         | otherwise                                           = otra 
+
+cantidadEjerciciosRutinaMaxima :: [Rutina] -> Int 
+cantidadEjerciciosRutinaMaxima = cantidadEjercicios . rutinaConMasEjercicios
