@@ -1,6 +1,6 @@
 
 // -------------------------------------------------------------------------------------
-// === Celulares
+// === CELULARES
 // -------------------------------------------------------------------------------------
 
 object samsung {
@@ -8,11 +8,11 @@ object samsung {
 
     method estáApagado() = bateria == 0 
 
-    method recargar() {
+    method llenarBateríaAlMáximo() {
         bateria = 5
     }
 
-    method realizarLlamada(duración) {
+    method bateríaQueConsume(duración) {
         bateria = bateria - 0.25
     }
   
@@ -24,11 +24,11 @@ object iphone {
 
     method estáApagado() = bateria == 0 
 
-    method recargar() {
+    method llenarBateríaAlMáximo() {
         bateria = 5
     }
 
-    method llamar(duración) {
+    method bateríaQueConsume(duración) {
         bateria = bateria - 0.001 * duración
     }
 
@@ -36,7 +36,7 @@ object iphone {
 
 
 // -------------------------------------------------------------------------------------
-// === Empresas
+// === EMPRESAS
 // -------------------------------------------------------------------------------------
 
 object movistar {
@@ -52,37 +52,53 @@ object claro {
 }
 
 // -------------------------------------------------------------------------------------
-// === Personas
+// === PERSONAS
 // -------------------------------------------------------------------------------------
 
 object juliana {
-    const celular = samsung
+    var celular = samsung
 
-    const empresaTelefónica = personal
+    var property empresa = personal
 
-    var property monto = 0
+    var property montoTotal = 0
 
     method tieneElCelularApagado() = celular.estáApagado()
 
+    method recargarCelular() {
+        celular.llenarBateríaAlMáximo()
+    }
+
+    method cambiarCelular(nuevoCelular) {
+        celular = nuevoCelular
+    }
+
     method llamar(duración) {
-        celular.llamar(duración)
-        monto = monto + empresaTelefónica.costoLlamada(duración)
+        celular.bateríaQueConsume(duración)
+        montoTotal = montoTotal + empresa.costoLlamada(duración)
     } 
   
 }
 
 object catalina {
-    const celular = iphone
+    var celular = iphone
 
-    const empresaTelefónica = movistar
+    var property empresa = movistar
 
-    var property monto = 0
+    var property montoTotal = 0
 
     method tieneElCelularApagado() = celular.estáApagado()
 
+    method recargarCelular() {
+        celular.llenarBateríaAlMáximo()
+    }
+
+    method cambiarCelular(nuevoCelular) {
+        celular = nuevoCelular
+    }
+
     method llamar(duración) {
-        celular.llamar(duración)
-        monto = monto + empresaTelefónica.costoLlamada(duración)
+        celular.bateríaQueConsume(duración)
+        montoTotal = montoTotal + empresa.costoLlamada(duración)
     } 
 
 }
