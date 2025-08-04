@@ -14,7 +14,7 @@ object julieta {
     method punteria() = 20 
 
     method jugar(unJuego) {
-        tickets = tickets + unJuego.ticketsGanados()
+        tickets = tickets + unJuego.ticketsGanados(self)
         cansancio = cansancio + unJuego.cansacioQueGenera()
     }
 
@@ -31,16 +31,18 @@ object tiroAlBlanco {
 }
 
 object pruebaFuerza {
-    
+
+    method ticketsGanados(jugador) = if (jugador.fuerza() > 75) 20 else 0 
+
+    method cansancioQueGenera() = 8
 }
 
 object ruedaFortuna {
     var property estaBienAceitada = true 
 
-    method ticketsGanados() = 0.randomUpTo(20).roundUp()
+    method ticketsGanados(jugador) = 0.randomUpTo(20).roundUp()
 
     method cansancioQueGenera() = if (estaBienAceitada) 0 else 1
-    
 }
 
 // -------------------------------------------------------------------------------------------
