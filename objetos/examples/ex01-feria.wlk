@@ -18,8 +18,14 @@ object julieta {
         cansancio = cansancio + unJuego.cansacioQueGenera()
     }
 
-    method puedeCanjear(unPremio) = false  
+    method puedeCanjear(unPremio) = tickets >= unPremio.costo()     
+}
+
+object gerundio {
     
+    method jugar(unJuego) { }
+
+    method puedeCanjear(unPremio) = true    
 }
 
 // -------------------------------------------------------------------------------------------
@@ -28,6 +34,9 @@ object julieta {
 
 object tiroAlBlanco {
     
+    method ticketsGanados(jugador) = (jugador.punteria() / 10).roundUp()  
+
+    method cansancioQueGenera() = 3
 }
 
 object pruebaFuerza {
@@ -50,9 +59,11 @@ object ruedaFortuna {
 // -------------------------------------------------------------------------------------------
 
 object ositoPeluche {
-    
+    const costo = 45
+
+    method costo() = costo
 }
 
 object taladro {
-    
+    var property costo = 200
 }
