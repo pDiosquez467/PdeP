@@ -1,12 +1,9 @@
-
+// -------------------------------------------------------------------------------------------
+// === JUGADORES
+// -------------------------------------------------------------------------------------------
 object julieta {
     var tickets = 15
     var cansancio = 0
-
-    method tickets() = tickets
-    method tickets(nuevoValor) {
-        tickets = nuevoValor
-    } 
 
     method cansancio(nuevoValor) {
         cansancio = nuevoValor
@@ -16,13 +13,18 @@ object julieta {
 
     method punteria() = 20 
 
-    method jugar() {
-      
+    method jugar(unJuego) {
+        tickets = tickets + unJuego.ticketsGanados()
+        cansancio = cansancio + unJuego.cansacioQueGenera()
     }
 
-    method puedeCanjear() = false  
+    method puedeCanjear(unPremio) = false  
     
 }
+
+// -------------------------------------------------------------------------------------------
+// === JUEGOS
+// -------------------------------------------------------------------------------------------
 
 object tiroAlBlanco {
     
@@ -33,8 +35,17 @@ object pruebaFuerza {
 }
 
 object ruedaFortuna {
+    var property estaBienAceitada = true 
+
+    method ticketsGanados() = 0.randomUpTo(20).roundUp()
+
+    method cansancioQueGenera() = if (estaBienAceitada) 0 else 1
     
 }
+
+// -------------------------------------------------------------------------------------------
+// === PREMIOS
+// -------------------------------------------------------------------------------------------
 
 object ositoPeluche {
     
