@@ -2,93 +2,92 @@
 // === AVES
 // --------------------------------------------------------------------------------------------
 
-// Objeto que representa a Pepita, una paloma mensajera
 object pepita {
 
   var energia = 100
   var lugarActual = lugarA
   var property entrenador = susana
 
-  // Devuelve la energía actual de Pepita
   method energia() = energia
 
-  // Devuelve el lugar actual en el que se encuentra Pepita
   method lugarActual() = lugarActual
 
-  // Indica si Pepita está débil.
   method estáDébil() = energia < 50 
 
-  // Indica si Pepita está eufórica.  
   method estáEufórica() = energia > 500 && energia.even()
 
-  // Indica si Pepita aún puede volar.  
-  method puedeVolar() = energia > 0
+  method puedeVolar(kilometros) = energia >= self.energiaNecesariaParaVolar(kilometros)
 
-  // Pepita vuela cierta distancia y consume la energía correspondiente
+  method energiaNecesariaParaVolar(km) = km + 10
+
+  // Pepita vuela cierta distancia y consume la energía correspondiente.
+  // Solo vuela si tiene la energía suficiente. En caso contrario, no hace nada.
   method volá(kilometros) {
-    energia = energia - self.energiaNecesariaPara(kilometros)
+    if (self.puedeVolar(kilometros)) {
+        energia = energia - self.energiaNecesariaParaVolar(kilometros)
+    }
   }
 
-  // Devuelve cuánta energía necesita para volar una cantidad de kilómetros
-  method energiaNecesariaPara(km) = km + 10
-
-  // Pepita come una cierta cantidad de gramos y gana energía
+  // Pepita come una cierta cantidad de gramos y gana energía.
   method comé(gramos) {
     energia = energia + gramos * 4
   }
 
-  // Indica si Pepita tiene energía suficiente para ir a un lugar dado
-  method puedeIrA(destino) = 
-    energia >= self.energiaNecesariaPara(self.lugarActual().distanciaA(destino))
-
   // Hace que Pepita vaya hacia un lugar si tiene suficiente energía.
-  // Cambia el lugar actual, y consume energía al volar.
+  // Cambia el lugar actual, y consume energía al volar la distancia correspondiente.
   method irA(destino) {
-    if (self.puedeIrA(destino)) {
-        const distancia = self.lugarActual().distanciaA(destino)
+    const distancia = self.lugarActual().distanciaA(destino)
+    if (self.puedeVolar(distancia)) {
         self.volá(distancia)
         lugarActual = destino
     }
   }
 
-    // Hace que Pepita se comporte como quiera según su estado de ánimo.
-    method cumplíTuDeseo() {
-        if (self.estáDébil()) {
-            self.comé(500)
-        } else if (self.estáEufórica()) {
-            self.volá(5)
-        }
-    }
+  // Hace que Pepita actúe según su estado de ánimo.
+  // Si está débil, come 500g. Si está eufórica, vuela 5km (sin cambiar de lugar).
+  method cumplíTuDeseo() {
+    if (self.estáDébil()) self.comé(500)
+    else if (self.estáEufórica()) self.volá(5)
+  }
 
-    // Hace que Pepita se entrene según las reglas de su entrenador actual.
-    method entrenate() {
-        entrenador.entrenáA(self)
-    }
+  // Entrena a Pepita utilizando el entrenador asignado.
+  method entrenate() {
+    entrenador.entrenáA(self)
+  }
 }
 
 object pepón {
-    var energía = 100
-    var property entrenador = roque
+  var energia = 100
+  var property entrenador = roque
 
-    method energía() = energía
+  method energia() = energia
 
-    method volá(kilometros) {
-        energía = energía - kilometros * 2
+  method energiaNecesariaParaVolar(kilometros) = kilometros * 2
+
+  method puedeVolar(kilometros) = energia >= self.energiaNecesariaParaVolar(kilometros)  
+
+  // Pepón vuela una distancia si tiene la energía suficiente.
+  // Consume 2 joules por kilómetro (sin costo fijo).
+  method volá(kilometros) {
+    if (self.puedeVolar(kilometros)) {
+        energia = energia - self.energiaNecesariaParaVolar(kilometros)
     }
+  }
 
-    method comé(gramos) {
-        energía = energía + gramos * 3 - 20
-    }
+  // Pepón gana energía al comer, con un costo fijo de 20 joules por digestión.
+  method comé(gramos) {
+    energia = energia + gramos * 3 - 20
+  }
 
-    method cumplíTuDeseo() {
-        self.comé(100)
-    }
+  // El deseo de Pepón es siempre comer 100 gramos.
+  method cumplíTuDeseo() {
+    self.comé(100)
+  }
 
-    method entrenate() {
-        entrenador.entrenáA(self)
-    }
-
-
+  // Entrena a Pepón utilizando el entrenador asignado.
+  method entrenate() {
+    entrenador.entrenáA(self)
+  }
 }
 
 // --------------------------------------------------------------------------------------------
@@ -96,15 +95,15 @@ object pepón {
 // --------------------------------------------------------------------------------------------
 
 class Lugar {
-    const kilometro = 0
+  const kilometro = 0
 
-    method distanciaA(otroLugar) = otroLugar.kilometro() - self.kilometro()
+  // Calcula la distancia entre dos lugares, siempre como valor absoluto.
+  method distanciaA(otroLugar) = (otroLugar.kilometro() - self.kilometro()).abs()
 
-	method kilometro() = kilometro
+  method kilometro() = kilometro
 }
 
 const lugarA = new Lugar()
-
 const lugarB = new Lugar(kilometro = 50)
 
 // --------------------------------------------------------------------------------------------
@@ -113,17 +112,19 @@ const lugarB = new Lugar(kilometro = 50)
 
 object susana {
 
-    method entrenáA(ave) {
-        ave.volá(3)
-        ave.cumplíTuDeseo()
-    }
+  // La rutina de Susana es: volar 3 km y luego cumplir el deseo del ave.
+  method entrenáA(ave) {
+    ave.volá(3)
+    ave.cumplíTuDeseo()
+  }
 }
 
 object roque {
 
-    method entrenáA(ave) {
-        ave.volá(5)
-        ave.comé(500)
-        ave.volá(3)
-    }
+  // La rutina de Roque es: volar 5 km, comer 500 gramos y volar otros 3 km.
+  method entrenáA(ave) {
+    ave.volá(5)
+    ave.comé(500)
+    ave.volá(3)
+  }
 }
