@@ -1,24 +1,31 @@
 
 class Micro {
-    const cantidadSentados 
+    const limiteSentados 
 
-    const cantidadParados 
+    const limiteParados 
+
+    const volumen
 
     const pasajerosActuales = [] 
 
     method cantidadActual() = pasajerosActuales.size()
 
-    method limitePasajeros() = cantidadSentados + cantidadParados
+    method limitePasajeros() = limiteSentados + limiteParados
+
+    method volumen() = volumen
 
     method hayLugar() = self.cantidadActual() <= self.limitePasajeros()
 
+    method hayAsientoLibre() = self.cantidadActual() < limiteSentados
+
     method estaVacio() = pasajerosActuales.isEmpty()
 
-    method puedeSubir(persona) = self.hayLugar() && persona.quiereSubirse(self) 
+    method quedanXLugaresLibres(x) = (self.limitePasajeros() - self.cantidadActual()) > x  
+
+    method puedeSubir(persona) = self.hayLugar() && persona.quiereSubir(self) 
 
     method subir(persona) {
         if (self.puedeSubir(persona)) {
-            
             pasajerosActuales.add(persona)
         } else {
             self.error('Error: No se pudo subir a esta persona')
@@ -28,8 +35,6 @@ class Micro {
     method bajarPersona() {
         if (not self.estaVacio()) {
             const pasajero = pasajerosActuales.anyOne()
-            // El pasajero debe saber que bajó...
-            pasajero.bajar(self)
             pasajerosActuales.remove(pasajero)
         } else {
             self.error('Error: Micro vacío')
@@ -40,4 +45,7 @@ class Micro {
 
 class Persona {
 
+    var property jefe
+
+    method quiereSubir(micro) 
 }
