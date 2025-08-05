@@ -1,87 +1,101 @@
-
-// -------------------------------------------------------------------------------------
+// =====================================================================================
 // === CELULARES
-// -------------------------------------------------------------------------------------
+// =====================================================================================
 
+/*
+ * Clase base para representar un celular.
+ * Tiene una batería con carga de 0 a 5.
+ */
 class Celular {
     var bateria = 5
 
-    method estáApagado() = bateria <= 0 
+    // Devuelve true si la batería está agotada.
+    method estaApagado() = bateria <= 0 
 
-    method llenarBateríaAlMáximo() {
+    // Recarga la batería al máximo.
+    method llenarBateriaAlMaximo() {
         bateria = 5
     }
 
-    method bateríaQueConsume(duración) 
-  
+    // Método polimórfico que indica cuánto consume de batería una llamada.
+    // Se redefine en las subclases.
+    method bateriaQueConsume(duracion) { }
 }
 
-class Samsung inherits Celular{
-    
-    override method bateríaQueConsume(duración) {
+/*
+ * Celular Samsung: consume batería de forma fija (0.25 por llamada).
+ */
+class Samsung inherits Celular {
+    override method bateriaQueConsume(duracion) {
         bateria = bateria - 0.25
     }
-  
 }
 
-
-class Iphone inherits Celular{
-    
-    override method bateríaQueConsume(duración) {
-        bateria = bateria - 0.001 * duración
+/*
+ * Celular iPhone: consume batería de forma proporcional a la duración.
+ */
+class Iphone inherits Celular {
+    override method bateriaQueConsume(duracion) {
+        bateria = bateria - 0.001 * duracion
     }
-
 }
 
+// =====================================================================================
+// === EMPRESAS DE TELEFONÍA
+// =====================================================================================
 
-// -------------------------------------------------------------------------------------
-// === EMPRESAS
-// -------------------------------------------------------------------------------------
-
+/*
+ * Movistar cobra 60 por cada minuto de llamada. Mensajes: 0.12.
+ */
 object movistar {
-    method costoLlamada(duración) = 60 * duración
-
+    method costoLlamada(duracion) = 60 * duracion
     method costoPorMensaje() = 0.12
 }
 
+/*
+ * Personal cobra 70 si la llamada dura hasta 10 min, luego 40 por minuto extra.
+ */
 object personal {
-    method costoLlamada(duración) = 70 + 40 * (duración - 10) 
-
+    method costoLlamada(duracion) = 70 + 40 * (duracion - 10)
     method costoPorMensaje() = 0.15
 }
 
+/*
+ * Claro cobra 0.50 + IVA (21%) por llamada, independientemente de la duración.
+ */
 object claro {
-    method costoLlamada(duración) = 0.50 * 1.21 
-
+    method costoLlamada(duracion) = 0.50 + 0.50 * 0.21
     method costoPorMensaje() = 0.12
 }
 
-// -------------------------------------------------------------------------------------
-// === Clase Persona
-// -------------------------------------------------------------------------------------
+// =====================================================================================
+// === PERSONA
+// =====================================================================================
 
+/*
+ * Representa una persona que tiene un celular y está asociada a una empresa.
+ * Puede hacer llamadas, enviar y recibir mensajes, y acumula su gasto total.
+ */
 class Persona {
     var property celular 
-
     var property empresa
-
     var property montoTotal = 0
 
     const mensajes = []
 
-    method tieneElCelularApagado() = celular.estáApagado()
+    method tieneElCelularApagado() = celular.estaApagado()
 
     method recargarCelular() {
-        celular.llenarBateríaAlMáximo()
+        celular.llenarBateriaAlMaximo()
     }
 
     method cambiarCelular(nuevoCelular) {
         celular = nuevoCelular
     }
 
-    method llamar(duración) {
-        celular.bateríaQueConsume(duración)
-        montoTotal = montoTotal + empresa.costoLlamada(duración)
+    method llamar(duracion) {
+        celular.bateriaQueConsume(duracion)
+        montoTotal = montoTotal + empresa.costoLlamada(duracion)
     } 
 
     method enviarMensaje(destinatario, texto) {
@@ -95,18 +109,26 @@ class Persona {
 
     method cantidadMensajesRecibidos() = mensajes.size()  
 
-    method recibióEsteMensaje(mensaje) = mensajes.includes(mensaje)
+    method recibioEsteMensaje(mensaje) = mensajes.includes(mensaje)
 
-    method recibióMensajeQueEmpieceCon(comienzo) =
-         mensajes.findOrElse({ m => m.startsWith(comienzo) }, { null }) 
-  
+    method recibioMensajeQueEmpieceCon(comienzo) =
+        mensajes.any({ m => m.startsWith(comienzo) })
 }
 
-// -------------------------------------------------------------------------------------
-// === Instancias de Persona
-// -------------------------------------------------------------------------------------
+// =====================================================================================
+// === INSTANCIAS DE PERSONA
+// =====================================================================================
 
-const juliana  = new Persona(celular = new Samsung(), empresa = personal)
-const catalina = new Persona(celular = new Iphone(), empresa = movistar)
-const juan     = new Persona(celular = new Iphone(), empresa = personal)
-const ernesto  = new Persona(celular = new Iphone(), empresa = claro)
+object fabricaDePersonas {
+    method conSamsungYPersonal() = new Persona(celular = new Samsung(), empresa = personal)
+    method conIphoneYMovistar() = new Persona(celular = new Iphone(), empresa = movistar)
+    method conIphoneYPersonal() = new Persona(celular = new Iphone(), empresa = personal)
+    method conIphoneYClaro() = new Persona(celular = new Iphone(), empresa = claro)
+
+}
+
+
+const juliana  = fabricaDePersonas.conSamsungYPersonal()
+const catalina = fabricaDePersonas.conIphoneYMovistar()
+const juan     = fabricaDePersonas.conIphoneYPersonal()
+const ernesto  = fabricaDePersonas.conIphoneYClaro()
