@@ -47,5 +47,26 @@ class Persona {
 
     var property jefe
 
-    method quiereSubir(micro) 
+    method quiereSubir(micro) = true
+}
+
+class Apurado inherits Persona { }
+
+class Claustrofobico {
+    override method quiereSubir(micro) = micro.volumen() > 120 
+}
+
+class Fiaca {
+    override method quiereSubir(micro) = micro.hayAsientoLibre()
+}
+
+class Moderado {
+    var x
+
+    override method quiereSubir(micro) = micro.quedanXLugaresLibres(x)
+}
+
+class Obsecuente {
+    
+    override method quiereSubir(micro) = self.jefe().quiereSubir(micro)
 }
