@@ -52,21 +52,21 @@ class Persona {
 
 class Apurado inherits Persona { }
 
-class Claustrofobico {
+class Claustrofobico inherits Persona{
     override method quiereSubir(micro) = micro.volumen() > 120 
 }
 
-class Fiaca {
+class Fiaca inherits Persona{
     override method quiereSubir(micro) = micro.hayAsientoLibre()
 }
 
-class Moderado {
-    var x
+class Moderado inherits Persona{
+    const x
 
     override method quiereSubir(micro) = micro.quedanXLugaresLibres(x)
 }
 
-class Obsecuente {
+class Obsecuente inherits Persona{
     
     override method quiereSubir(micro) = self.jefe().quiereSubir(micro)
 }
