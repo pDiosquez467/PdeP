@@ -124,86 +124,151 @@ class ModRegistroComidas {
 // DISPOSITIVOS DE ATENCIÓN
 // ==========================================================================================
 
-class Comedero {
-    const racion
-    var cantidadRaciones = 30
-    const pesoMaximoSop 
+class DispositivoAtencionComida {
 
-    method puedeAtender(animal) = animal.tieneHambre() && animal.peso() < pesoMaximoSop
+    const valorInicial
 
-    method atender(animal) {
-        if (self.puedeAtender(animal)) {
-            animal.comer(racion)
-            cantidadRaciones -= 1
-        }
+    var valorActual 
+
+    method disminuirValorActual(delta) {
+        valorActual -= delta
     }
 
-    method necesitaRecarga() = cantidadRaciones < 10
+    method puedeAtender(animal) = animal.tieneHambre()
 
-    method recargarRaciones() {
-        cantidadRaciones = 30 
+    method atender(animal, racion, delta) {
+        animal.comer(racion)
+        self.disminuirValorActual(delta)
+    }
+
+    method necesitaRecargar(criterio) = valorActual.apply(criterio) 
+
+    method recargar() {
+        valorActual = valorInicial
+    }
+}
+
+class DispositivoAtencionBebida {
+
+    var valorActual 
+
+    method incrementarValorActual(delta) {
+        valorActual += delta
+    }
+
+    method puedeAtender(animal) = animal.tieneSed()
+
+    method atender(animal, racion, delta) {
+        animal.beber()
+        self.incrementarValorActual(delta)
+    }
+
+    method necesitaRecargar(criterio) = valorActual.apply(criterio) 
+
+    method recargar() {
+        valorActual = 0
+    }
+}
+
+class DispositivoAtencionVacunas {
+
+    var valorActual 
+
+    method disminuirValorActual(delta) {
+        valorActual += delta
+    }
+
+    method puedeAtender(animal) = animal.convieneVacunarlo()
+
+    method atender(animal, racion, delta) {
+        animal.vacunar()
+        self.disminuirValorActual(delta)
+    }
+
+    method necesitaRecargar(criterio) = valorActual.apply(criterio) 
+
+    method recargar() {
+        valorActual = 50
+    }
+}
+
+class Comedero {
+    const racion
+    const pesoMaximoSop 
+
+    const dispositivoAtencionComida = new DispositivoAtencionComida(valorInicial=30, valorActual=30)
+
+    method puedeAtender(animal) = dispositivoAtencionComida.puedeAtender(animal) && animal.peso() < pesoMaximoSop
+
+    method atender(animal) {
+        dispositivoAtencionComida.atender(animal, racion, 1)
+    }
+
+    method necesitaRecarga() = dispositivoAtencionComida.necesitaRecarga({ valor => valor < 10 })
+
+    method recargar() {
+        dispositivoAtencionComida.recargar()
     }
 
 }
 
 class ComederoInteligente {
 
-    const capacidadMaximaComida 
+    const capacidadMaxComida
 
-    var cantidadComida = capacidadMaximaComida
+    const dispositivoAtencionComida = 
+        new DispositivoAtencionComida(valorInicial=capacidadMaxComida, valorActual=capacidadMaxComida)
 
-    method puedeAtender(animal) = animal.tieneHambre()
+
+    method puedeAtender(animal) = dispositivoAtencionComida.puedeAtender(animal)
 
     method atender(animal) {
-        if (self.puedeAtender(animal)) {
-            const racion = animal.peso() / 100
-            animal.comer(racion)
-            cantidadComida -= racion
-        }
+        const racion = animal.peso() / 100
+        dispositivoAtencionComida.atender(animal, racion, racion)
     }
 
-    method necesitaRecarga() = cantidadComida < 15
+    method necesitaRecarga() = dispositivoAtencionComida.necesitaRecargar({valor => valor < 15})
 
-    method recargarRaciones() {
-        cantidadComida = capacidadMaximaComida
+    method recargar() {
+        dispositivoAtencionComida.recargar()
     }
 
 }
 
 class Bebedero {
-    
-    var cantidadAnimalesAtendidos = 0
 
-    method puedeAtender(animal) = animal.tieneSed()
+    const dispositivoAtencionBebida = 
+        new DispositivoAtencionBebida(valorActual=0)
+
+
+    method puedeAtender(animal) = dispositivoAtencionBebida.puedeAtender(animal)
 
     method atender(animal) {
-        animal.beber()
-        cantidadAnimalesAtendidos += 1
+        dispositivoAtencionBebida.atender(animal, 1)
     }
 
-    method necesitaRecarga() = cantidadAnimalesAtendidos == 20
+    method necesitaRecarga() = dispositivoAtencionBebida.necesitaRecarga({ valor => valor == 20 })
 
     method recargar() {
-        cantidadAnimalesAtendidos = 0
+        dispositivoAtencionBebida.recargar()
     }
 
 }
 
 class Vacunatorio {
 
-    const valorInicial
+    const dispositivoAtencionVacunas = 
+        new DispositivoAtencionVacunas(valorActual=50)
 
-    var cantidadVacunas = valorInicial
-
-    method puedeAtender(animal) = animal.convieneVacunarlo() 
+    method puedeAtender(animal) = dispositivoAtencionVacunas.puedeAtender(animal)
 
     method atender(animal) {
-        animal.vacunar()
+        dispositivoAtencionVacunas.atender(animal, 1)
     }
 
-    method necesitaRecarga() = cantidadVacunas == 0
+    method necesitaRecarga() = dispositivoAtencionVacunas.necesitaRecarga({ valor => valor == 0 })
 
     method recargar() {
-        cantidadVacunas = valorInicial
+        dispositivoAtencionVacunas.recargar()
     }
 }
