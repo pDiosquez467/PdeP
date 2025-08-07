@@ -145,3 +145,27 @@ class Comedero {
     }
 
 }
+
+class ComederoInteligente {
+
+    const capacidadMaximaComida 
+
+    var cantidadComida = capacidadMaximaComida
+
+    method puedeAtender(animal) = animal.tieneHambre()
+
+    method atender(animal) {
+        if (self.puedeAtender(animal)) {
+            const racion = animal.peso() / 100
+            animal.comer(racion)
+            cantidadComida -= racion
+        }
+    }
+
+    method necesitaRecarga() = cantidadComida < 15
+
+    method recargarRaciones() {
+        cantidadComida = capacidadMaximaComida
+    }
+
+}
