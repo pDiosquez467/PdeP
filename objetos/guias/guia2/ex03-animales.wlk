@@ -169,3 +169,41 @@ class ComederoInteligente {
     }
 
 }
+
+class Bebedero {
+    
+    var cantidadAnimalesAtendidos = 0
+
+    method puedeAtender(animal) = animal.tieneSed()
+
+    method atender(animal) {
+        animal.beber()
+        cantidadAnimalesAtendidos += 1
+    }
+
+    method necesitaRecarga() = cantidadAnimalesAtendidos == 20
+
+    method recargar() {
+        cantidadAnimalesAtendidos = 0
+    }
+
+}
+
+class Vacunatorio {
+
+    const valorInicial
+
+    var cantidadVacunas = valorInicial
+
+    method puedeAtender(animal) = animal.convieneVacunarlo() 
+
+    method atender(animal) {
+        animal.vacunar()
+    }
+
+    method necesitaRecarga() = cantidadVacunas == 0
+
+    method recargar() {
+        cantidadVacunas = valorInicial
+    }
+}
