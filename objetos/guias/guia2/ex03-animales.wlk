@@ -118,3 +118,30 @@ class ModRegistroComidas {
 
     method cantidadDeVecesQueComio() = cantidadComidas
 }
+
+
+// ==========================================================================================
+// DISPOSITIVOS DE ATENCIÓN
+// ==========================================================================================
+
+class Comedero {
+    const racion
+    var cantidadRaciones = 30
+    const pesoMaximoSop 
+
+    method puedeAtender(animal) = animal.tieneHambre() && animal.peso() < pesoMaximoSop
+
+    method atender(animal) {
+        if (self.puedeAtender(animal)) {
+            animal.comer(racion)
+            cantidadRaciones -= 1
+        }
+    }
+
+    method necesitaRecarga() = cantidadRaciones < 10
+
+    method recargarRaciones() {
+        cantidadRaciones = 30 
+    }
+
+}
