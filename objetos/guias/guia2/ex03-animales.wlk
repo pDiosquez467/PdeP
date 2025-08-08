@@ -214,7 +214,7 @@ class Comedero {
 
 class ComederoInteligente {
 
-    const capacidadMaxComida
+    var capacidadMaxComida
 
     const dispositivoAtencionComida = 
         new DispositivoAtencionComida(valorInicial=capacidadMaxComida, valorActual=capacidadMaxComida)
@@ -270,5 +270,23 @@ class Vacunatorio {
 
     method recargar() {
         dispositivoAtencionVacunas.recargar()
+    }
+}
+
+// ==========================================================================================
+// ESTACIÓN DE SERVICIO
+// ==========================================================================================
+
+class EstacionDeServicio {
+    const dispositivosDeAtencion 
+
+    method puedeSerAtendido(animal) = dispositivosDeAtencion.anyOne().puedeAtender(animal)
+
+    method atender(animal) = dispositivosDeAtencion.anyOne().atender(animal)
+
+    method recargarDispositivos() {
+        dispositivosDeAtencion
+            .filter({ dispositivo => dispositivo.necesitaRecarga() })
+            .map({ dispositivo => dispositivo.recargar() })
     }
 }
