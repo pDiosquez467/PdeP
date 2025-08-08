@@ -1,41 +1,41 @@
+// ===========================================================================================
+// === PERSONAJES
+// ===========================================================================================
 
 class Personaje {
 
-    var property fuerza
+    const property fuerza
 
-    var property inteligencia
+    const property inteligencia
 
     var property  rol   
 
     method potencialOfensivo() = fuerza * 10 + rol.potencialOfensivo()
 
-    method esGroso() = rol.esGroso(self)
+    method esInteligente()
+
+    method esGroso() = self.esInteligente() || rol.esGroso(self)
 }
 
 class Orco inherits Personaje {
 
     override method potencialOfensivo() = super() * 1.1
 
+    override method esInteligente() = false
+
 }
 
 class Humano inherits Personaje {
 
-    method esInteligente() = inteligencia > 50
+    override method esInteligente() = inteligencia > 50
     
 }
 
 // ===========================================================================================
-// ROLES 
+// === ROLES 
 // ===========================================================================================
 
-// Clase abstracta - Funciona como interfaz 
-class Rol {
-    method potencialOfensivo()
-
-    method esGroso(personaje)
-}
-
-class Guerrero {
+object guerrero {
 
     method potencialOfensivo() = 100
 
@@ -52,7 +52,7 @@ class Cazador {
 
 }
 
-class Brujo {
+object brujo {
 
     method potencialOfensivo() = 0
 
@@ -60,7 +60,7 @@ class Brujo {
 }
 
 // ===========================================================================================
-// ANEXO 
+// === MASCOTA 
 // ===========================================================================================
 
 class Mascota {
@@ -68,16 +68,9 @@ class Mascota {
     const tieneGarras 
     const edad 
 
-    method fuerza() = fuerza
-
-    method tieneGarras() = tieneGarras
-
-    method edad() = edad 
-
-    method potecialOfensivo() = if (self.tieneGarras()) fuerza * 2 else fuerza 
+    method potecialOfensivo() = if (tieneGarras) fuerza * 2 else fuerza 
 
     method esLongeva() = edad > 10
-
 }
 
 // ===========================================================================================
