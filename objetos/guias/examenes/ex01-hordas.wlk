@@ -28,7 +28,6 @@ class Orco inherits Personaje {
 class Humano inherits Personaje {
 
     override method esInteligente() = inteligencia > 50
-    
 }
 
 // ===========================================================================================
@@ -78,13 +77,17 @@ class Mascota {
 // ===========================================================================================
 
 class Localidad {
-    const habitantes = []
+    const habitantes
+
+    const ejercitoDefensor = habitantes 
 
     method cantidadHabitantes() = habitantes.size()
 
     method agregarHabitante(personaje) = habitantes.add(personaje)
 
     method sePuedeAgregarHabitante()
+
+    method potencialOfensivoTotal() = ejercitoDefensor.potencialOfensivoTotal()
 
 }
 
@@ -97,4 +100,23 @@ class Aldea inherits Localidad {
 class Ciudad inherits Localidad {
 
     override method sePuedeAgregarHabitante() = true 
+
+    override method potencialOfensivoTotal() = super() + 300
+}
+
+// ===========================================================================================
+// EJÉRCITO
+// ===========================================================================================
+
+class Ejercito {
+
+    const soldados
+
+    method potencialOfensivoTotal() = 
+        soldados.filter({ soldado => soldado.potencialOfensivo() }).sum()
+
+    method miembrosConMayorPotencialOfensivo() = 
+        soldados
+            .sortBy({ s1, s2 => s1.potecialOfensivo() > s2.potecialOfensivo() })
+            .take(10)
 }
