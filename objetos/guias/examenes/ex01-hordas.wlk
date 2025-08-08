@@ -99,9 +99,9 @@ class Ejercito {
   method potencialOfensivo() = soldados.sum(
     { soldado => soldado.potencialOfensivo() }
   )
-
+  
   method removerSoldados(removidos) {
-    soldados.removeAll(removidos)  
+    soldados.removeAll(removidos)
   }
   
   method invadirLocalidad(localidad) {
@@ -109,7 +109,7 @@ class Ejercito {
       localidad.esOcupadaPor(self)
   }
   
-  method miembrosConMayorPotencialOfensivo() =
-    soldados.sortedBy({ s1, s2 => s2.potencialOfensivo() - s1.potencialOfensivo() }).take(10)
-
+  method miembrosConMayorPotencialOfensivo() = soldados.sortedBy(
+    { s1, s2 => s2.potencialOfensivo() - s1.potencialOfensivo() }
+  ).take(10)
 }
