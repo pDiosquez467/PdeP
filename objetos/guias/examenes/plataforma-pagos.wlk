@@ -1,3 +1,22 @@
+// ------------------------------------------------------------------------------------------
+// === PLATAFORMA
+// ------------------------------------------------------------------------------------------
+
+object plataforma {
+
+    const usuarios = []
+
+    method emailUsuariosVerificadosConMayorSaldo() = 
+        usuarios
+            .filter({ us => us.estaVerificado() })
+            .sortedBy({ us, otro => us.saldoTotal() > otro.saldoTotal() })
+            .map({ us => us.email() })
+            .take(100)
+
+    method cantidadSuperUsuarios() = usuarios.filter({ us => us.esSuperUsuario() }).size()
+
+}
+
 
 // ------------------------------------------------------------------------------------------
 // === CONTENIDO
@@ -65,21 +84,29 @@ class Usuario {
 
 object publicidad {
 
-    method dineroRecaudado(contenido, monto) = monto
+    method dineroRecaudado(contenido) {
+        var totalBase = contenido.vistas() * 0.05
+        if (contenido.esPopular()) {
+            totalBase += 2000
+        }
+
+        
+        return totalBase 
+    }
 
     method puedeMonetizar(contenido) = not contenido.esOfensivo()
 }
 
 object donacion {
 
-    method dineroRecaudado(contenido, monto) = monto
+    method dineroRecaudado(contenido) = 0
 
     method puedeMonetizar(contenido) = true 
 }
 
 object ventaDescarga {
 
-    method dineroRecaudado(contenido, monto) = monto
+    method dineroRecaudado(contenido) = 0 
 
     method puedeMonetizar(contenido) = contenido.esPopular()
 }
