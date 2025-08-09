@@ -15,10 +15,22 @@ class Contenido {
 
     var property monetizacion 
 
-    method totalRecaudado() = monetizacion.dineroGenerado(self)
+    method totalRecaudado() = monetizacion.dineroRecaudado(self)
+
+    method esPopular()
 
 }
 
+class Video inherits Contenido {
+    
+    override method esPopular() = vistas > 10000
+}
+
+class Imagen inherits Contenido {
+    
+    override method esPopular() = false
+
+}
 
 // ------------------------------------------------------------------------------------------
 // === USUARIOS
@@ -51,3 +63,23 @@ class Usuario {
 // === ESTRATEGIAS DE MONETIZACIÓN
 // ------------------------------------------------------------------------------------------
 
+object publicidad {
+
+    method dineroRecaudado(contenido, monto) = monto
+
+    method puedeMonetizar(contenido) = not contenido.esOfensivo()
+}
+
+object donacion {
+
+    method dineroRecaudado(contenido, monto) = monto
+
+    method puedeMonetizar(contenido) = true 
+}
+
+object ventaDescarga {
+
+    method dineroRecaudado(contenido, monto) = monto
+
+    method puedeMonetizar(contenido) = contenido.esPopular()
+}
