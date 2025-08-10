@@ -29,6 +29,8 @@ class Contenido {
     const vistas 
     method vistas() = vistas 
 
+    var property valorVenta 
+
     var property esOfensivo 
     var property tags
 
@@ -41,14 +43,21 @@ class Contenido {
 }
 
 class Video inherits Contenido {
-    
+
     override method esPopular() = vistas > 10000
+
+    method limiteRecaudacionPublicidad() = 10000
+
+    method esAlquilable() = true 
 }
 
 class Imagen inherits Contenido {
     
-    override method esPopular() = false
+    override method esPopular() = tags.size() == tags.filter({ tag => ["A", "B", "C"].includes(tag) }).size() 
 
+    method limiteRecaudacionPublicidad() = 4000
+
+    method esAlquilable() = false 
 }
 
 // ------------------------------------------------------------------------------------------
@@ -63,8 +72,11 @@ class Usuario {
 
     var property estaVerificado = false 
 
-    method publicar(contenido, monetizacion) {
+    method monetizar(contenido, monetizacion) {
         contenido.monetizacion(monetizacion)
+    }
+
+    method publicar(contenido) {
         contenidos.add(contenido)
     }
 
@@ -76,6 +88,12 @@ class Usuario {
 
     method esSuperUsuario() = contenidos.size() > 10
 
+    method asignarValorVenta(contenido, monetizacion, valor) {
+        if (valor < monetizacion.precioMinimoVenta()) 
+            throw new Exception(message = "Error")    
+        contenido.valorVenta(valor)
+    }
+
 }
 
 // ------------------------------------------------------------------------------------------
@@ -86,11 +104,14 @@ object publicidad {
 
     method dineroRecaudado(contenido) {
         var totalBase = contenido.vistas() * 0.05
+        
+        if (totalBase > contenido.limiteRecaudacionPublicidad()) {
+            throw new Exception(message = "Límite de recaudación excedido")
+        }
+
         if (contenido.esPopular()) {
             totalBase += 2000
         }
-
-        
         return totalBase 
     }
 
@@ -106,7 +127,18 @@ object donacion {
 
 object ventaDescarga {
 
-    method dineroRecaudado(contenido) = 0 
+    method precioMinimoVenta() = 5
+
+    method dineroRecaudado(contenido) = contenido.valorVenta(self) * contenido.vistas()
 
     method puedeMonetizar(contenido) = contenido.esPopular()
+}
+
+object alquiler {
+    
+    method precioMinimoVenta() = 1
+
+    method dineroRecaudado(contenido) = contenido.valorVenta(self) * contenido.vistas()
+
+    method puedeMonetizar(contenido) = contenido.esAlquilable() 
 }
