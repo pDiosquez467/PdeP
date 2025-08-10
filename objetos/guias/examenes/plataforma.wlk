@@ -55,3 +55,33 @@ class Descarga {
     
     method recaudacionDe(contenido) = contenido.vistas() * precio 
 }
+
+// ============================================================================================
+// === USUARIOS
+// ============================================================================================
+
+object usuarios {
+
+    const usuarios = []
+
+    method emailsDeUsuariosRicos() = 
+        usuarios
+            .filter({ us => us.estaVerificado() })
+            .sortedBy({ us, otro => us.saldoTotal() > otro.saldoTotal() })
+            .take(100)
+            .map({ us => us.email() })
+
+    method cantidadDeSuperUsuarios() = usuarios.count({ us => us.esSuperUsuario() })
+}
+
+class Usuario {
+    const property nombre
+    const property email
+    var property estaVerificado = false  
+    const contenidos 
+
+    method saldoTotal() = contenidos.sum({ contenido => contenido.recaudacion() })
+
+    method esSuperUsuario() = contenidos.count({ contenido => contenido.esPopular() }) >= 10
+
+}
