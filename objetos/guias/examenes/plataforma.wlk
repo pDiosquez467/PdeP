@@ -29,7 +29,9 @@ class Contenido {
 
     method recaudacionMaximaParaPublicidad()
 
-    method esAlquilable()
+    method puedeVenderse() = self.esPopular()
+
+    method puedeAlquilarse()
 }
 
 class Video inherits Contenido {
@@ -38,7 +40,7 @@ class Video inherits Contenido {
 
     override method recaudacionMaximaParaPublicidad() = 10000
 
-    override method esAlquilable() = true 
+    override method puedeAlquilarse() = true 
 
 }
 
@@ -51,7 +53,7 @@ class Imagen inherits Contenido {
 
     override method recaudacionMaximaParaPublicidad() = 4000
 
-    override method esAlquilable() = false 
+    override method puedeAlquilarse() = false 
 }
 
 // ============================================================================================
@@ -87,7 +89,7 @@ class Descarga {
 
     method recaudacionDe(contenido) = contenido.vistas() * precio 
 
-    method puedeMonetizar(contenido) = contenido.esPopular()
+    method puedeMonetizar(contenido) = contenido.puedeVenderse()
 }
 
 class Alquiler inherits Descarga {
@@ -98,7 +100,7 @@ class Alquiler inherits Descarga {
         }
     }
 
-    override method puedeMonetizar(contenido) = contenido.esAlquilable()
+    override method puedeMonetizar(contenido) = contenido.puedeAlquilarse()
 }
 
 // ============================================================================================
