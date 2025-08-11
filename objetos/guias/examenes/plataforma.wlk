@@ -100,7 +100,7 @@ class Alquiler inherits Descarga {
         }
     }
 
-    override method puedeMonetizar(contenido) = contenido.puedeAlquilarse()
+    override method puedeMonetizar(contenido) = super(contenido) && contenido.puedeAlquilarse()
 }
 
 // ============================================================================================
