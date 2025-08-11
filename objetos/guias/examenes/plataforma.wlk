@@ -9,16 +9,16 @@ class Contenido {
     var property monetizacion 
 
     method monetizacion(nueva) {
-        self.validarMonetizacion()
+        self.validarMonetizacion(nueva)
         monetizacion = nueva 
     }
 
     override method initialize() {
-        self.validarMonetizacion()
+        self.validarMonetizacion(monetizacion)
     }
 
-    method validarMonetizacion() {
-        if (!monetizacion.puedeMonetizar(self)) {
+    method validarMonetizacion(posibleMonetizacion) {
+        if (!posibleMonetizacion.puedeMonetizar(self)) {
             throw new Exception(message = "El contenido no soporta la monetización elegida")
         }
     }
