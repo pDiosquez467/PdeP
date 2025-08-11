@@ -137,10 +137,20 @@ class AhorroDeEnergia {
 
     method computoDe(equipo) = (self.consumoDe(equipo) / equipo.consumoBase()) * equipo.computoBase()
 
+    method periodicidadError() = 17
+    
     method realizoComputo(equipo) {
         computosRealizados += 1
-        if (computosRealizados % 17 == 0) {
+        if (computosRealizados % self.periodicidadError() == 0) {
             throw new DomainException(message = "Error!")
         }
     }
+
+}
+
+class APruebaDeFallos inherits AhorroDeEnergia {
+
+    override method computoDe(equipo) = super(equipo) / 2
+
+    override method periodicidadError() = 100 
 }
