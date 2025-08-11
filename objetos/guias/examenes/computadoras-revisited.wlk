@@ -15,6 +15,8 @@ class SuperComputadora {
     method estaMalConfigurada() = 
         self.equipoActivoQueMas({ eq => eq.consumo() }) != 
         self.equipoActivoQueMas({ eq => eq.computo() })
+
+    method estaActivo() = true
 }
 
 // -------------------------------------------------------------------------------------------
@@ -33,14 +35,33 @@ class Equipo {
 
     method computo() = modo.computoDe(self)
 
+    method consumoBase()
+
+    method computoBase()
+
+    method computoExtraPorOverClock()
+
 }
 
 class A105 inherits Equipo{
+
+    override method consumoBase() = 300
+
+    override method computoBase() = 600
+
+    override method computoExtraPorOverClock() = self.computoBase() * 0.3
 
 }
 
 class B2 inherits Equipo {
 
+    const microsInstalados
+
+    override method consumoBase() = 10 + microsInstalados * 50
+
+    override method computoBase() = 800.min(microsInstalados * 100)
+
+    override method computoExtraPorOverClock() = microsInstalados * 20
 }
 
 // -------------------------------------------------------------------------------------------
@@ -49,24 +70,24 @@ class B2 inherits Equipo {
 
 object standard {
 
-    method consumoDe(equipo) = 0
+    method consumoDe(equipo) = equipo.consumoBase()
 
-    method computoDe(equipo) = 0
+    method computoDe(equipo) = equipo.computoBase()
   
 }
 
 class Overclock {
 
-    method consumoDe(equipo) = 0
+    method consumoDe(equipo) = equipo.consumoBase() * 2
 
-    method computoDe(equipo) = 0
+    method computoDe(equipo) = equipo.computoBase() + equipo.computoExtraPorOverClock()
 
 }
 
 class AhorroDeEnergia {
 
-    method consumoDe(equipo) = 0
+    method consumoDe(equipo) = 200
 
-    method computoDe(equipo) = 0
+    method computoDe(equipo) = (self.consumoDe(equipo) / equipo.consumoBase()) * equipo.computoBase()
 
 }
