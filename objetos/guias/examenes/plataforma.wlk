@@ -19,7 +19,7 @@ class Contenido {
 
     method validarMonetizacion() {
         if (!monetizacion.puedeMonetizar(self)) {
-            throw new Exception(message = "El contenido no puede ser monetizado")
+            throw new Exception(message = "El contenido no soporta la monetización elegida")
         }
     }
 
