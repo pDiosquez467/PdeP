@@ -1,182 +1,166 @@
 // ======================================================================================= 
 // == NIÑOS
 // =======================================================================================
-
 object niños {
+  const niños = []
   
-    const niños = []
-
-    method niñosConMuchosCaramelos() = 
-        niños
-        .sortBy({ niño, otro => niño.bolsaDeCaramelos() > otro.bolsaDeCaramelos() })
-        .take(3)
-
-    method elementosUsados() = 
-        niños
-        .filter({ niño => niño.bolsaDeCaramelos() > 10 })
-        .map({ niño => niño.elementosUsados() })
-        .asSet()
-
+  method niñosConMuchosCaramelos() = niños.sortBy(
+    { niño, otro => niño.bolsaDeCaramelos() > otro.bolsaDeCaramelos() }
+  ).take(3)
+  
+  method elementosUsados() = niños.filter(
+    { niño => niño.bolsaDeCaramelos() > 10 }
+  ).map({ niño => niño.elementosUsados() }).asSet()
 }
 
 class Niño {
-    var property actitud 
-    const elementosUsados
-    var property bolsaDeCaramelos = 0 
-    var property estadoDeSalud = sano 
-    var cantidadCaramelosComidos = 0
-
-    method capacidadDeAsustar() =
-         elementosUsados.sum({ el => el.susto() }) * estadoDeSalud.actitud(self)
-
-    method asustar(adulto) {
-      bolsaDeCaramelos += adulto.darCaramelosA(self)
+  var property actitud
+  const elementosUsados = #{}
+  var property bolsaDeCaramelos = 0
+  var property estadoDeSalud = sano
+  var cantidadCaramelosComidos = 0
+  
+  override method initialize() {
+    if ((actitud < 0) || (actitud > 10)) {
+      throw new DomainException(message = "Debe ser 1 <= 'actitud' <= 7")
     }
-
-    method agregarCaramelos(cantidad) {
-        bolsaDeCaramelos += cantidad
+  }
+  
+  method capacidadDeSusto() = elementosUsados.sum(
+    { el => el.capacidadDeSusto() }
+  ) * estadoDeSalud.actitud(self)
+  
+  method asustar(adulto) {
+    bolsaDeCaramelos += adulto.darCaramelosA(self)
+  }
+  
+  method comerCaramelos(cantidad) {
+    if (bolsaDeCaramelos < cantidad) {
+      throw new DomainException(message = "Caramelos insuficientes en la bolsa")
     }
-
-    method comerCaramelos(cantidad) {
-        if (bolsaDeCaramelos < cantidad) {
-            throw new DomainException(message = "Caramelos insuficientes en la bolsa")
-        }
-        bolsaDeCaramelos -= cantidad
-        cantidadCaramelosComidos += cantidad 
-        self.actualizarEstadoDeSalud(cantidad)
+    bolsaDeCaramelos -= cantidad
+    cantidadCaramelosComidos += cantidad
+    self.actualizarEstadoDeSalud(cantidad)
+  }
+  
+  method actualizarEstadoDeSalud(cantidad) {
+    if (cantidad > 10) {
+      estadoDeSalud = estadoDeSalud.estadoSiguiente()
     }
-
-    method actualizarEstadoDeSalud(cantidad) {
-        if (cantidad > 10) estadoDeSalud = estadoDeSalud.estadoSiguiente()
-    }
-
-    method puedeComerCaramelos() = estadoDeSalud.puedeSeguirComiendo(self)
-
+  }
+  
+  method puedeComerCaramelos() = estadoDeSalud.puedeSeguirComiendo(self)
 }
-
 // ======================================================================================= 
+
 // == ESTADO DE SALUD
 // =======================================================================================
-
-object sano {
-
-    method actitud(niño) = niño.actitud()  
-
-    method puedeSeguirComiendo(niño) = true
-
-    method estadoSiguiente() = empachado
+class EstadoDeSalud {
+  method actitud(niño) = niño.actitud()
+  
+  method puedeSeguirComiendo(niño) = true
+  
+  method estadoSiguiente()
 }
 
-object empachado {
-
-    method actitud(niño) = niño.actitud() / 2 
-
-    method puedeSeguirComiendo(niño) = true
-
-    method estadoSiguiente() = enCama
+object sano inherits EstadoDeSalud {
+  override method estadoSiguiente() = empachado
 }
 
-object enCama {
-    method actitud(niño) = 0
-
-    method puedeSeguirComiendo(niño) = false 
-
-    method estadoSiguiente() = self
+object empachado inherits EstadoDeSalud {
+  override method actitud(niño) = niño.actitud() / 2
+  
+  override method estadoSiguiente() = enCama
 }
 
-
+object enCama inherits EstadoDeSalud {
+  override method actitud(niño) = 0
+  
+  override method puedeSeguirComiendo(niño) = false
+  
+  override method estadoSiguiente() = self
+}
 // ======================================================================================= 
+
 // == ELEMENTOS QUE ASUSTAN
 // =======================================================================================
+class ElementoQueAsusta {
+  var property capacidadDeSusto
+}
 
-object maquillaje {
+object maquillaje inherits ElementoQueAsusta (capacidadDeSusto = 3) {
   
-    method susto() = 3
 }
 
-object trajeTierno {
-
-    method susto() = 2
+object trajeTierno inherits ElementoQueAsusta (capacidadDeSusto = 3) {
+  
 }
 
-object trajeTerrorifico  {
-
-    method susto() = 5
+object trajeTerrorifico inherits ElementoQueAsusta (capacidadDeSusto = 3) {
+  
 }
-
 // ======================================================================================= 
+
 // == ADULTOS
 // =======================================================================================
-
 class Adulto {
-
-    method toleranciaAlSusto() = 100
-
-    method esAsustadoPor(niño)
-
-    method darCaramelos(niño)
-
-}
-
-class AdultoComun inherits Adulto {
-
-    var property cantidadDeNiñosAntes
-
-    override method toleranciaAlSusto() = 10 * cantidadDeNiñosAntes
-
-    override method esAsustadoPor(niño) = self.toleranciaAlSusto() > niño.capacidadDeAsustar()
-
-    override method darCaramelos(niño) {
-        if (self.esAsustadoPor(niño)) {
-            throw new DomainException(message = "El niño no pudo asustar al adulto!")
-        }
-
-        if (niño.bolsaDeCaramelos() > 15) {
-            cantidadDeNiñosAntes += 1
-        }
-
-        niño.agregarCaramelos(self.toleranciaAlSusto() / 2)
+  const niñosQueIntentaronAsustarAntes = #{}
+  
+  method toleranciaAlSusto() = 10 * niñosQueIntentaronAsustarAntes.size()
+  
+  method esAsustadoPor(
+    niño
+  ) = self.toleranciaAlSusto() <= niño.capacidadDeSusto()
+  
+  method darCaramelos(niño) {
+    if (self.criterioDeSusto(niño)) niñosQueIntentaronAsustarAntes.add(niño)
+    
+    if (!self.esAsustadoPor(niño)) {
+      return 0
     }
+    return self.cantidadDeCaramelosPorSusto()
+  }
+  
+  method cantidadDeCaramelosPorSusto() = self.toleranciaAlSusto() / 2
+  
+  method criterioDeSusto(niño) = niño.bolsaDeCaramelos() > 15
 }
 
 class Anciano inherits Adulto {
+  override method darCaramelos(niño) = super(niño) / 2
 
-    override method esAsustadoPor(niño) = true 
-
-    override method toleranciaAlSusto() = super() / 2
-
+  override method esAsustadoPor(niño) = true 
 }
 
-class AdultoNecio inherits Adulto {
-
-    override method esAsustadoPor(niño) = false
-
+object necio inherits Adulto() {
+  override method esAsustadoPor(niño) = false
 }
-
 // ======================================================================================= 
+
 // == LEGIONES
 // =======================================================================================
-
 class Legion {
-
-    const miembros 
-
-    override method initialize() {
-        if (miembros.size() < 2) {
-            throw new DomainException(message = "Cada legión debe tener al menos dos niños")
-        }
+  const miembros
+  
+  override method initialize() {
+    if (miembros.size() < 2) {
+      throw new DomainException(
+        message = "Cada legión debe tener al menos dos niños"
+      )
     }
-
-    method capacidadDeAsustar() = miembros.sum({ miembro => miembro.capacidadDeAsustar() })
-
-    method cantidadDeCaramelos() = miembros.sum({ miembro => miembro.bolsaDeCaramelos() })
-
-    method lider() = miembros.max({ miembro => miembro.capacidadDeAsustar() })
-
-    method asustar(adulto) {
-        if (adulto.esAsustadoPor(self)) {
-            adulto.darCaramelos(self.lider())
-        }
-    }
-
+  }
+  
+  method capacidadDeSusto() = miembros.sum(
+    { miembro => miembro.capacidadDeSusto() }
+  )
+  
+  method cantidadDeCaramelos() = miembros.sum(
+    { miembro => miembro.bolsaDeCaramelos() }
+  )
+  
+  method lider() = miembros.max({ miembro => miembro.capacidadDeSusto() })
+  
+  method asustar(adulto) {
+    if (adulto.esAsustadoPor(self)) adulto.darCaramelos(self.lider())
+  }
 }
