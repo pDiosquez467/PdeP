@@ -1,18 +1,21 @@
 // ======================================================================================= 
-// == NIÑOS
+// == BARRIOS
 // =======================================================================================
-object niños {
-  const niños = []
+class Barrio {
+  const niños
   
-  method niñosConMuchosCaramelos() = niños.sortBy(
+  method topConMasCaramelos(n) = niños.sortedBy(
     { niño, otro => niño.bolsaDeCaramelos() > otro.bolsaDeCaramelos() }
-  ).take(3)
+  ).take(n)
   
   method elementosUsados() = niños.filter(
     { niño => niño.bolsaDeCaramelos() > 10 }
   ).map({ niño => niño.elementosUsados() }).asSet()
 }
 
+// ======================================================================================= 
+// == NIÑOS
+// =======================================================================================
 class Niño {
   var property actitud
   const elementosUsados = #{}
@@ -67,17 +70,17 @@ class EstadoDeSalud {
   method estadoSiguiente()
 }
 
-object sano inherits EstadoDeSalud {
+object sano inherits EstadoDeSalud() {
   override method estadoSiguiente() = empachado
 }
 
-object empachado inherits EstadoDeSalud {
+object empachado inherits EstadoDeSalud() {
   override method actitud(niño) = niño.actitud() / 2
   
   override method estadoSiguiente() = enCama
 }
 
-object enCama inherits EstadoDeSalud {
+object enCama inherits EstadoDeSalud() {
   override method actitud(niño) = 0
   
   override method puedeSeguirComiendo(niño) = false
