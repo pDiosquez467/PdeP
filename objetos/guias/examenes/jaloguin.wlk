@@ -12,8 +12,8 @@ class Barrio {
     { niño => niño.bolsaDeCaramelos() > 10 }
   ).map({ niño => niño.elementosUsados() }).asSet()
 }
-
 // ======================================================================================= 
+
 // == NIÑOS
 // =======================================================================================
 class Niño {
@@ -24,7 +24,7 @@ class Niño {
   var cantidadCaramelosComidos = 0
   
   override method initialize() {
-    if ((actitud < 0) || (actitud > 10)) {
+    if ((actitud < 1) || (actitud > 10)) {
       throw new DomainException(message = "Debe ser 1 <= 'actitud' <= 7")
     }
   }
@@ -34,9 +34,9 @@ class Niño {
   ) * estadoDeSalud.actitud(self)
   
   method intentarAsustar(adulto) {
-    bolsaDeCaramelos += adulto.darCaramelosA(self)
+    bolsaDeCaramelos += adulto.darCaramelos(self)
   }
-
+  
   method incrementarCaramelos(cantidad) {
     bolsaDeCaramelos += cantidad
   }
@@ -67,25 +67,23 @@ class EstadoDeSalud {
   
   method puedeSeguirComiendo(niño) = true
   
-  method estadoSiguiente()
+  method estadoSiguiente() = self
 }
 
-object sano inherits EstadoDeSalud() {
+object sano inherits EstadoDeSalud {
   override method estadoSiguiente() = empachado
 }
 
-object empachado inherits EstadoDeSalud() {
+object empachado inherits EstadoDeSalud {
   override method actitud(niño) = niño.actitud() / 2
   
   override method estadoSiguiente() = enCama
 }
 
-object enCama inherits EstadoDeSalud() {
+object enCama inherits EstadoDeSalud {
   override method actitud(niño) = 0
   
   override method puedeSeguirComiendo(niño) = false
-  
-  override method estadoSiguiente() = self
 }
 // ======================================================================================= 
 
@@ -132,7 +130,9 @@ class Legion {
   method lider() = miembros.max({ miembro => miembro.capacidadDeSusto() })
   
   method intentarAsustar(adulto) {
-    if (adulto.esAsustadoPor(self)) self.lider().incrementarCaramelos(adulto.darCaramelos(self))
+    if (adulto.esAsustadoPor(self)) self.lider().incrementarCaramelos(
+        adulto.darCaramelos(self)
+      )
   }
 }
 // ======================================================================================= 
@@ -146,7 +146,7 @@ class Adulto {
   
   method esAsustadoPor(
     asustador
-  ) = self.toleranciaAlSusto() <= asustador.capacidadDeSusto()
+  ) = self.toleranciaAlSusto() < asustador.capacidadDeSusto()
   
   method darCaramelos(asustador) {
     if (self.criterioDeSusto(asustador)) asustadoresQueLoIntentaronAntes.add(
@@ -165,11 +165,11 @@ class Adulto {
 }
 
 class Anciano inherits Adulto {
-  override method darCaramelos(niño) = super(niño) / 2
+  override method darCaramelos(asustador) = super(asustador) / 2
   
-  override method esAsustadoPor(niño) = true
+  override method esAsustadoPor(asustador) = true
 }
 
 object necio inherits Adulto {
-  override method esAsustadoPor(niño) = false
+  override method esAsustadoPor(asustador) = false
 }
