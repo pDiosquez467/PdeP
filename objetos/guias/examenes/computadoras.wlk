@@ -4,57 +4,45 @@
 class Equipo {
   var property modo
   var property estaQuemado = false
-  var property cantidadComputos = 0
   
   method consumoBase()
   
-  method capacidadComputoBase()
+  method computoBase()
   
-  method capacidadComputoOverclock()
+  method computoExtraOverclock()
   
-  method estaActivo() = (not estaQuemado) && (self.capacidadComputo() > 0)
+  method estaActivo() = (not estaQuemado) && (self.computo() > 0)
   
   method consumo()
   
-  method capacidadComputo()
+  method computo()
   
-  method computar(complejidad) {
-    self.validarComputo(complejidad)
+  method computar(problema) {
+    self.validarComputo(problema)
     
-    if (complejidad > self.capacidadComputo()) {
+    if (problema.complejidad() > self.computo()) {
       throw new Exception(message = "Capacidad de cómputo excedida")
     }
-    
-    cantidadComputos += 1
-    self.actualizarEstado()
-    
-    if (self.estaQuemado()) {
-      throw new Exception(message = "Equipo quemado")
-    }
+
+    modo.computar(problema)
   }
   
-  method actualizarEstado() {
-    modo.estadoEquipo(self)
-  }
-  
-  method validarComputo(complejidad) {
-    
-  }
+  method validarComputo(problema) 
 }
 
 class A105 inherits Equipo {
   override method consumoBase() = 300
   
-  override method capacidadComputoBase() = 600
+  override method computoBase() = 600
   
-  override method capacidadComputoOverclock() = self.capacidadComputoBase() * 1.3
+  override method computoExtraOverclock() = self.computoBase() * 0.3
   
-  override method consumo() = modo.consumoRequerido(self)
+  override method consumo() = modo.consumo(self)
   
-  override method capacidadComputo() = modo.capacidadGenerada(self)
+  override method computo() = modo.computo(self)
   
-  override method validarComputo(complejidad) {
-    if (complejidad < 5) {
+  override method validarComputo(problema) {
+    if (problema.complejidad() < 5) {
       throw new Exception(message = "Complejidad demasiado baja")
     }
   }
@@ -65,13 +53,19 @@ class B2 inherits Equipo {
   
   override method consumoBase() = cantidadMicrochips * 50
   
-  override method capacidadComputoBase() = 800.min(cantidadMicrochips * 100)
+  override method computoBase() = 800.min(cantidadMicrochips * 100)
   
-  override method capacidadComputoOverclock() = cantidadMicrochips * 120
+  override method computoExtraOverclock() = cantidadMicrochips * 20
   
-  override method consumo() = modo.consumoRequerido(self)
+  override method consumo() = modo.consumo(self)
   
-  override method capacidadComputo() = modo.capacidadGenerada(self)
+  override method computo() = modo.computo(self)
+
+  override method validarComputo(problema) { }
+}
+
+class Problema {
+  var property complejidad
 }
 // ===========================================================================================
 
@@ -85,6 +79,15 @@ class SuperComputadora {
     equipos.add(equipo)
   }
   
+  // === MÉTODOS DE LA INTERFAZ -- TODA SUPERCOMPUTADORA ES UN EQUIPO!
+  method estaActivo()
+  
+  method computo() = self.sumaSobreActivos({ equipo => equipo.computo() })
+  
+  method capacidadConsumo() = self.sumaSobreActivos(
+    { equipo => equipo.capacidadConsumo() }
+  )
+  
   method equiposActivos() = equipos.filter({ equipo => equipo.estaActivo() })
   
   method sumaSobreActivos(bloque) = self.equiposActivos().sum(bloque)
@@ -93,28 +96,20 @@ class SuperComputadora {
   
   method cantidadEquiposActivos() = self.equiposActivos().size()
   
-  method capacidadComputo() = self.sumaSobreActivos(
-    { equipo => equipo.capacidadComputo() }
-  )
-  
-  method capacidadConsumo() = self.sumaSobreActivos(
-    { equipo => equipo.capacidadConsumo() }
-  )
-  
   method equipoMayorConsumo() = self.maximoSobreActivos(
     { eq, otro => eq.capacidadConsumo() > otro.capacidadConsumo() }
   )
   
   method equipoMayorComputo() = self.maximoSobreActivos(
-    { eq, otro => eq.capacidadComputo() > otro.capacidadComputo() }
+    { eq, otro => eq.computo() > otro.computo() }
   )
   
   method estaMalConfigurada() = self.equipoMayorConsumo() != self.equipoMayorComputo()
   
-  method computar(complejidad) {
-    const fraccionCompl = complejidad / self.cantidadEquiposActivos()
-    self.equiposActivos().map({ equipo => equipo.computar(fraccionCompl) })
-    complejidadCalculada += complejidad
+  method computar(problema) {
+    const fraccionCompl = problema.complejidad() / self.cantidadEquiposActivos()
+    self.equiposActivos().forEach({ equipo => equipo.computar(fraccionCompl) })
+    complejidadCalculada += problema.complejidad()
   }
 }
 // ===========================================================================================
@@ -122,44 +117,47 @@ class SuperComputadora {
 // === MODOS
 // ===========================================================================================
 object standard {
-  method consumoRequerido(equipo) = equipo.consumoBase()
+  method consumo(equipo) = equipo.consumoBase()
   
-  method capacidadGenerada(equipo) = equipo.capacidadComputoBase()
-  
-  method estadoEquipo(equipo) {
-    
-  }
+  method computo(equipo) = equipo.computoBase()
+
+  method actualizarEstadoDe(equipo) { } 
 }
 
 class Overclock {
-  const property nroMaximoUso
+  var usosRestantes
   
-  method consumoRequerido(equipo) = equipo.consumoBase() * 2
+  method consumo(equipo) = equipo.consumoBase() * 2
   
-  method capacidadGenerada(equipo) = equipo.capacidadComputoOverclock()
+  method computo(equipo) = equipo.computoBase() + equipo.computoExtraOverclock()
   
-  method estadoEquipo(equipo) {
-    if (equipo.cantidadComputos() == nroMaximoUso) equipo.estaQuemado(true)
+  method actualizarEstadoDe(equipo) {
+    if (usosRestantes == 0) {
+      equipo.estaQuemado(true)
+      throw new DomainException(message = "Equipo quemado")
+    }
+    usosRestantes -= 1
   }
 }
 
 class Ahorro {
   method nroMaximoComputos() = 17
-
-  method consumoRequerido(equipo) = 200
   
-  method capacidadGenerada(
+  method consumo(equipo) = 200
+  
+  method computo(equipo) = equipo.computoBase() * (self.consumo(
     equipo
-  ) = equipo.capacidadComputoBase() * (200 / equipo.consumoBase())
+  ) / equipo.consumoBase())
   
-  method estadoEquipo(equipo) {
-    if (equipo.cantidadComputos() == self.nroMaximoComputos()) equipo.estaQuemado(true)
+  method actualizarEstadoDe(equipo) {
+    if (equipo.cantidadComputos() == self.nroMaximoComputos())
+      equipo.estaQuemado(true)
+      throw new DomainException(message = "Equipo quemado")
   }
 }
 
 class APruebaDeFallos inherits Ahorro {
-    override method nroMaximoComputos() = 100
-
-    override method capacidadGenerada(equipo) = super(equipo) * 0.5
-
+  override method nroMaximoComputos() = 100
+  
+  override method computo(equipo) = super(equipo) * 0.5
 }
