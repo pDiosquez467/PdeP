@@ -30,8 +30,12 @@ class Niño {
     { el => el.capacidadDeSusto() }
   ) * estadoDeSalud.actitud(self)
   
-  method asustar(adulto) {
+  method intentarAsustar(adulto) {
     bolsaDeCaramelos += adulto.darCaramelosA(self)
+  }
+
+  method incrementarCaramelos(cantidad) {
+    bolsaDeCaramelos += cantidad
   }
   
   method comerCaramelos(cantidad) {
@@ -101,42 +105,6 @@ object trajeTerrorifico inherits ElementoQueAsusta (capacidadDeSusto = 3) {
 }
 // ======================================================================================= 
 
-// == ADULTOS
-// =======================================================================================
-class Adulto {
-  const niñosQueIntentaronAsustarAntes = #{}
-  
-  method toleranciaAlSusto() = 10 * niñosQueIntentaronAsustarAntes.size()
-  
-  method esAsustadoPor(
-    niño
-  ) = self.toleranciaAlSusto() <= niño.capacidadDeSusto()
-  
-  method darCaramelos(niño) {
-    if (self.criterioDeSusto(niño)) niñosQueIntentaronAsustarAntes.add(niño)
-    
-    if (!self.esAsustadoPor(niño)) {
-      return 0
-    }
-    return self.cantidadDeCaramelosPorSusto()
-  }
-  
-  method cantidadDeCaramelosPorSusto() = self.toleranciaAlSusto() / 2
-  
-  method criterioDeSusto(niño) = niño.bolsaDeCaramelos() > 15
-}
-
-class Anciano inherits Adulto {
-  override method darCaramelos(niño) = super(niño) / 2
-
-  override method esAsustadoPor(niño) = true 
-}
-
-object necio inherits Adulto() {
-  override method esAsustadoPor(niño) = false
-}
-// ======================================================================================= 
-
 // == LEGIONES
 // =======================================================================================
 class Legion {
@@ -154,13 +122,51 @@ class Legion {
     { miembro => miembro.capacidadDeSusto() }
   )
   
-  method cantidadDeCaramelos() = miembros.sum(
+  method bolsaDeCaramelos() = miembros.sum(
     { miembro => miembro.bolsaDeCaramelos() }
   )
   
   method lider() = miembros.max({ miembro => miembro.capacidadDeSusto() })
   
-  method asustar(adulto) {
-    if (adulto.esAsustadoPor(self)) adulto.darCaramelos(self.lider())
+  method intentarAsustar(adulto) {
+    if (adulto.esAsustadoPor(self)) self.lider().incrementarCaramelos(adulto.darCaramelos(self))
   }
+}
+// ======================================================================================= 
+
+// == ADULTOS
+// =======================================================================================
+class Adulto {
+  const asustadoresQueLoIntentaronAntes = #{}
+  
+  method toleranciaAlSusto() = 10 * asustadoresQueLoIntentaronAntes.size()
+  
+  method esAsustadoPor(
+    asustador
+  ) = self.toleranciaAlSusto() <= asustador.capacidadDeSusto()
+  
+  method darCaramelos(asustador) {
+    if (self.criterioDeSusto(asustador)) asustadoresQueLoIntentaronAntes.add(
+        asustador
+      )
+    
+    if (!self.esAsustadoPor(asustador)) {
+      return 0
+    }
+    return self.cantidadDeCaramelosPorSusto()
+  }
+  
+  method cantidadDeCaramelosPorSusto() = self.toleranciaAlSusto() / 2
+  
+  method criterioDeSusto(asustador) = asustador.bolsaDeCaramelos() > 15
+}
+
+class Anciano inherits Adulto {
+  override method darCaramelos(niño) = super(niño) / 2
+  
+  override method esAsustadoPor(niño) = true
+}
+
+object necio inherits Adulto {
+  override method esAsustadoPor(niño) = false
 }
