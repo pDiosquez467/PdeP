@@ -10,7 +10,7 @@ class Barrio {
   
   method elementosUsados() = niños.filter(
     { niño => niño.bolsaDeCaramelos() > 10 }
-  ).map({ niño => niño.elementosUsados() }).asSet()
+  ).flatMap({ niño => niño.elementosUsados() }).asSet()
 }
 // ======================================================================================= 
 
@@ -42,6 +42,12 @@ class Niño {
   }
   
   method comerCaramelos(cantidad) {
+    if (!self.puedeComerCaramelos()) {
+      throw new DomainException(
+        message = "El niño no puede comer más caramelos en el estado actual"
+      )
+    }
+    
     if (bolsaDeCaramelos < cantidad) {
       throw new DomainException(message = "Caramelos insuficientes en la bolsa")
     }
@@ -97,11 +103,11 @@ object maquillaje inherits ElementoQueAsusta (capacidadDeSusto = 3) {
   
 }
 
-object trajeTierno inherits ElementoQueAsusta (capacidadDeSusto = 3) {
+object trajeTierno inherits ElementoQueAsusta (capacidadDeSusto = 2) {
   
 }
 
-object trajeTerrorifico inherits ElementoQueAsusta (capacidadDeSusto = 3) {
+object trajeTerrorifico inherits ElementoQueAsusta (capacidadDeSusto = 5) {
   
 }
 // ======================================================================================= 
