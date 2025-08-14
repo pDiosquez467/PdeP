@@ -24,8 +24,25 @@ class Niño {
     }
 
     method disminuirFelicidad(delta) {
-        felicidad *= (1 - delta)
+        const nuevaFelicidad = felicidad * (1 - delta)
+        self.felicidad(nuevaFelicidad)
     }
+
+    method felicidad(nuevaFelicidad) {
+        if (nuevaFelicidad < 1) {
+            throw new DomainException(message = "Felicidad demasiado baja!")
+        }
+        felicidad = nuevaFelicidad
+    }
+
+    method recuerdosRecientes(n) = recuerdos.reverse().take(n).reverse()
+
+    method pensamientosCentrales() = pensamientosCentrales
+
+    method pensamientosCentralesDificilesDeExplicar() = 
+        pensamientosCentrales.filter({ pensamiento => pensamiento.esDificilDeExplicar() })
+
+    
 
 }
 
@@ -42,6 +59,8 @@ class Recuerdo {
     method asentar(niño) {
         emocion.asentar(niño, self)
     }
+
+    method esDificilDeExplicar() = descripcion.words().size() > 10
     
 }
 
@@ -62,11 +81,8 @@ object alegria {
 object tristeza {
 
     method asentar(niño, recuerdo) {
-        niño.convertirEnPensamientoCentral(recuerdo)
         niño.disminuirFelicidad(0.1)
-        if (niño.felicidad() < 1) {
-            throw new DomainException(message = "Felicidad demasiado baja!")
-        }
+        niño.convertirEnPensamientoCentral(recuerdo)
     }
 }
 
