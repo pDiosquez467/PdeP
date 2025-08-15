@@ -55,9 +55,35 @@ class Niño {
         memoriaALargoPlazo.add(recuerdo)
     }
 
+    method desequilibrar() {
+        self.disminuirFelicidad(0.15)
+        3.times({ i => 
+            self.pensamientosCentrales().remove(self.pesamientoMasAntiguo())
+        })
+    }
+
+    method pesamientoMasAntiguo() = 
+        pensamientosCentrales.min({ recuerdo => recuerdo.fecha() })
+
+    method estaDesequilibradoHormonalmente() = 
+        self.pensamientoCentralEnMemoriaLargoPlazo() or
+        self.todosLosRecuerdosDelDiaConLaMismaEmocion()
+
+    method pensamientoCentralEnMemoriaLargoPlazo() = 
+        memoriaALargoPlazo.any({ pensamiento => self.esPensamientoCentral(pensamiento) })
+
+    method todosLosRecuerdosDelDiaConLaMismaEmocion() {
+        const algunRecuerdoDelDia = recuerdos.anyOne()
+        return recuerdos.all({ recuerdo => recuerdo.tienenLaMismaEmocion(algunRecuerdoDelDia) })
+    }
+
+    method restaurar(valor) {
+        const nuevaFelicidad = 1000.min(self.felicidad() + valor)
+        self.felicidad(nuevaFelicidad)
+    }
+
     method liberacionRecuerdosDelDia() {
-        const recuerdosDelDia = self.recuerdosDelDia(5)
-        recuerdosDelDia.forEach({ recuerdo => self.recuerdos().remove(recuerdo) })
+        recuerdos.clear()
     }
 
     method dormir() {
@@ -73,7 +99,7 @@ class Niño {
 class Recuerdo {
 
     const descripcion 
-    const fecha 
+    const property fecha 
     const property emocion
 
     method asentar(niño) {
@@ -95,6 +121,8 @@ class Recuerdo {
     method enviarMemoriaALargoPlazo(niño) {
         niño.enviarMemoriaALargoPlazo(self)
     }
+
+    method tienenLaMismaEmocion(otro) = emocion == otro.emocion()
 }
 
 
@@ -170,15 +198,24 @@ object profundizacion {
                 recuerdo.esRecuerdoDelDia(niño) &&
                 not recuerdo.esPensamientoCentral(niño) && 
                 not recuerdo.esNegadoPor(niño.emocionDominante())
-            }).forEach({ recuerdo => recuerdo.enviarMemoriaALargoPlazo(niño) })
+            })
+            .forEach({ recuerdo => recuerdo.enviarMemoriaALargoPlazo(niño) })
     }
 }
 
 object restauracionCognitiva {
     
     method desencadenarseEn(niño) {
-        const nuevaFelicidad = 1000.min(niño.felicidad() + 100)
-        niño.felicidad(nuevaFelicidad)
+        niño.restaurar(100)
+    }
+}
+
+object controlHormonal {
+
+    method desencadenarseEn(niño) {
+        if (niño.estaDesequilibradoHormonalmente()) {
+            niño.desequilibrar()
+        }
     }
 }
 
