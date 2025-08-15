@@ -10,6 +10,7 @@ class Niño {
     const pensamientosCentrales = #{}
     const procesosMentales = []
     const memoriaALargoPlazo = #{}
+    var property edad 
 
     method vivirEvento(descripcion) {
         recuerdos.add(
@@ -90,6 +91,13 @@ class Niño {
         procesosMentales.forEach({ proceso => proceso.desencadenarseEn(self) })
     }
 
+    method rememorar() {
+        const pensamientoAntiguo = 
+            memoriaALargoPlazo
+                .findOrElse({ pensamiento => pensamiento.esMasAntiguoQue(edad / 2)}, null)
+        self.convertirEnPensamientoCentral(pensamientoAntiguo)
+    }
+
 }
 
 // ==========================================================================================
@@ -123,6 +131,8 @@ class Recuerdo {
     }
 
     method tienenLaMismaEmocion(otro) = emocion == otro.emocion()
+
+    method esMasAntiguoQue(años) = (new Date()).year() - self.fecha().year() > años
 }
 
 
@@ -224,4 +234,21 @@ object liberacionRecuerdosDelDia {
     method desencadenarseEn(niño) {
         niño.liberacionRecuerdosDelDia()
     }
+}
+
+// ==========================================================================================
+// === EMOCIONES COMPUESTAS
+// ==========================================================================================
+
+class EmocionCompuesta {
+
+    const emociones
+
+    method asentar(recuerdo) {
+        emociones.forEach({ emocion => emocion.asentar(recuerdo) })
+    }
+
+    method niegaRecuerdo(recuerdo) = emociones.all({ emocion => emocion.niegaRecuerdo(recuerdo) }) 
+
+    method esAlegre() = emociones.any({ emocion => emocion.esAlegre() }) 
 }
