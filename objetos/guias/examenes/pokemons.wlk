@@ -7,20 +7,30 @@ class Pokemon {
     const vidaMaxima
     var vidaActual  
     const movimientos 
-    var property puedeMoverse = true 
+    var property puedeMoverse = true
+    const property condicion
 
     method estaVivo() = vidaActual > 0
 
     method grositud() = vidaMaxima * movimientos.sum({ movimiento => movimiento.poder() })
 
+    method movimientosDispobibles() = 
+        movimientos.filter({ movimiento => not movimiento.estaAgotado() })
+
     method recargarVida(cantidad) {
         vidaActual = vidaMaxima.min(vidaActual + cantidad)
     }
 
+    method disminuirVida(cantidad) {
+        vidaActual = 0.max(vidaActual - cantidad)
+    }
+
+    method puedeLuchar() = self.estaVivo()
+
     method luchar(pokemon) {
-        if (self.estaVivo() && self.puedeMoverse()) {
-            const movimiento = movimientos.anyOne()
-            if (not movimiento.estaAgotado()) movimiento.usar(self, pokemon)
+        if (self.puedeLuchar()) {
+            const movimiento = self.movimientosDispobibles().anyOne()
+            movimiento.usar(self, pokemon)
         }
     }
 }
@@ -29,56 +39,79 @@ class Pokemon {
 // === MOVIMIENTOS
 // =======================================================================================
 
-class MovimientoCurativo {
-
-    var property usos = 10
-
-    const puntosCuracion
+class Movimiento {
+    var property usos
 
     method estaAgotado() = usos == 0
 
+    method poder()
+
     method usar(pokemon, otro) {
-        pokemon.recargarVida(puntosCuracion)
         usos -= 1 
     }
 
-    method poder() = puntosCuracion
 }
 
-class MovimientoDañino {
+class MovimientoCurativo inherits Movimiento {
 
-    var property usos = 10
+    const puntosCuracion
+
+    override method usar(pokemon, otro) {
+        pokemon.recargarVida(puntosCuracion)
+        super(pokemon, otro) 
+    }
+
+    override method poder() = puntosCuracion
+}
+
+class MovimientoDañino inherits Movimiento {
 
     const dañoProducido
 
-    method usar(pokemon, otro) {
-        
-        usos -= 1
+    override method usar(pokemon, otro) {
+        otro.disminuirVida(dañoProducido)
+        super(pokemon, otro)
     }
 
-    method poder() = dañoProducido * 2 
+    override method poder() = dañoProducido * 2 
 }
 
-class MovimientoEspecial {
+class MovimientoEspecial inherits Movimiento {
 
-    var property usos = 10
+    const condicion 
 
-    method usar(pokemon, otro) {
-        
-        usos -= 1
+    override method usar(pokemon, otro) {
+        otro.condicion(condicion) 
+        super(pokemon, otro)  
     }
 
-    method poder()
-
-    method puedeUsarse() = 0.randomUpTo(2).roundUp().even()
+    override method poder() = condicion.poder()
+    
 }
 
-object sueño inherits MovimientoEspecial() {
+// =======================================================================================
+// === CONDICIONES
+// =======================================================================================
 
-    override method poder() = 30
+object dormido {
+
+    method puedeMoverse(pokemon) {
+        const puedeMoverse = 0.randomUpTo(2).roundUp().even()
+        pokemon.puedeMoverse(puedeMoverse)
+    } 
+        
+    method poder() = 30
 }
 
-object paralisis inherits MovimientoEspecial() {
+class Paralizado {
 
-    override method poder() = 50
+    var turnosParalizado = 2
+
+    method puedeMoverse(pokemon) {
+        const puedeMoverse = 0.randomUpTo(2).roundUp().even() && turnosParalizado == 0
+        turnosParalizado -= 1
+        pokemon.puedeMoverse(puedeMoverse)
+    }
+
+    method poder() = 50
 }
