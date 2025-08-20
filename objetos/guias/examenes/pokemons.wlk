@@ -36,7 +36,7 @@ class Pokemon {
     }
 
     method lucharContra(contrincante) {
-        if (not self.estaVivo()) {
+        if (not self.estaVivo() && contrincante.estaVivo()) {
             throw new DomainException(message = "El pokemon NO puede luchar!")
         }
         const movimiento = self.movimientosDisponible()
@@ -125,7 +125,7 @@ class CondicionEspecial {
         pokemon.normalizar()
     }
         
-    method poder() = 50
+    method poder()
 }
 
 
