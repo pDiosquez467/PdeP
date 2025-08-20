@@ -1,37 +1,47 @@
 // =======================================================================================
 // === POKEMONS
 // =======================================================================================
-
 class Pokemon {
 
     const vidaMaxima
-    var vidaActual  
-    const movimientos 
-    var property puedeMoverse = true
-    const property condicion
+    var vida  
+    const movimientos = #{}
+    var property condicion = normal 
 
-    method estaVivo() = vidaActual > 0
+    override method initialize() {
+        if (vida > vidaMaxima or vida <= 0) {
+            throw new DomainException(message = "Debe ser 0 <= vida <= vidaMaxima!")
+        }
+    }
+
+    method estaVivo() = vida > 0
+
+    method puedeMoverse() = condicion.puedeMoverse(self)
+
+    method normalizar() {
+        condicion = normal
+    }
 
     method grositud() = vidaMaxima * movimientos.sum({ movimiento => movimiento.poder() })
 
-    method movimientosDispobibles() = 
-        movimientos.filter({ movimiento => not movimiento.estaAgotado() })
+    method movimientosDisponible() = 
+        movimientos.find({ movimiento => movimiento.estaDisponible() })
 
-    method recargarVida(cantidad) {
-        vidaActual = vidaMaxima.min(vidaActual + cantidad)
+    method restaurarVida(cantidad) {
+        vida = vidaMaxima.min(vida + cantidad)
     }
 
-    method disminuirVida(cantidad) {
-        vidaActual = 0.max(vidaActual - cantidad)
+    method recibirDaño(daño) {
+        vida = 0.max(vida - daño)
     }
 
-    method puedeLuchar() = self.estaVivo()
-
-    method luchar(pokemon) {
-        if (self.puedeLuchar()) {
-            const movimiento = self.movimientosDispobibles().anyOne()
-            movimiento.usar(self, pokemon)
+    method lucharContra(contrincante) {
+        if (not self.estaVivo()) {
+            throw new DomainException(message = "El pokemon NO puede luchar!")
         }
+        const movimiento = self.movimientosDisponible()
+        condicion.intentarMoverse(self)
+        movimiento.usarEntre(self, contrincante)
     }
 }
 
@@ -40,78 +50,109 @@ class Pokemon {
 // =======================================================================================
 
 class Movimiento {
-    var property usos
+    var property usosPendientes
 
-    method estaAgotado() = usos == 0
+    method estaDisponible() = usosPendientes > 0
 
     method poder()
 
-    method usar(pokemon, otro) {
-        usos -= 1 
+    method usarEntre(pokemon, contrincante) {
+        if (not self.estaDisponible()) {
+            throw new DomainException(message = "El movimiento NO está disponible")
+        }
+        usosPendientes -= 1 
+        self.afectarPokemons(pokemon, contrincante)
     }
+
+    method afectarPokemons(pokemon, contrincante)
 
 }
 
 class MovimientoCurativo inherits Movimiento {
 
-    const puntosCuracion
+    const puntosDeSalud
 
-    override method usar(pokemon, otro) {
-        pokemon.recargarVida(puntosCuracion)
-        super(pokemon, otro) 
+    override method afectarPokemons(pokemon, contrincante) {
+        pokemon.restaurarVida(puntosDeSalud)
     }
 
-    override method poder() = puntosCuracion
+    override method poder() = puntosDeSalud
 }
 
 class MovimientoDañino inherits Movimiento {
 
-    const dañoProducido
+    const dañoQueProduce
 
-    override method usar(pokemon, otro) {
-        otro.disminuirVida(dañoProducido)
-        super(pokemon, otro)
+    override method afectarPokemons(pokemon, contrincante) {
+        contrincante.recibirDaño(dañoQueProduce)
     }
 
-    override method poder() = dañoProducido * 2 
+    override method poder() = dañoQueProduce * 2 
 }
 
 class MovimientoEspecial inherits Movimiento {
 
-    const condicion 
+    const condicionQueGenera 
 
-    override method usar(pokemon, otro) {
-        otro.condicion(condicion) 
-        super(pokemon, otro)  
+    override method afectarPokemons(pokemon, contrincante) {
+        contrincante.condicion(condicionQueGenera) 
+    
     }
 
-    override method poder() = condicion.poder()
+    override method poder() = condicionQueGenera.poder()
     
 }
 
 // =======================================================================================
 // === CONDICIONES
 // =======================================================================================
+object normal {
+    method puedeMoverse(pokemon) = true 
 
-object dormido {
+    method intentarMoverse(pokemon) {
 
-    method puedeMoverse(pokemon) {
-        const puedeMoverse = 0.randomUpTo(2).roundUp().even()
-        pokemon.puedeMoverse(puedeMoverse)
-    } 
-        
-    method poder() = 30
+    }
 }
 
-class Paralizado {
+class CondicionEspecial {
+    method puedeMoverse(pokemon) = 0.randomUpTo(2).roundUp().even()
 
-    var turnosParalizado = 2
+    method intentarMoverse(pokemon) {
+        if (not self.puedeMoverse(pokemon)) {
+            throw new DomainException(message = "El pokemon NO pudo moverse!")
+        }
 
-    method puedeMoverse(pokemon) {
-        const puedeMoverse = 0.randomUpTo(2).roundUp().even() && turnosParalizado == 0
-        turnosParalizado -= 1
-        pokemon.puedeMoverse(puedeMoverse)
+        pokemon.normalizar()
+    }
+        
+    method poder() = 50
+}
+
+
+object sueño inherits CondicionEspecial() {
+
+    override method intentarMoverse(pokemon) {
+        super(pokemon)
+        pokemon.normalizar()
+    }
+        
+    override method poder() = 50
+}
+
+class Paralizado inherits CondicionEspecial {
+
+    override method poder() = 30
+}
+
+class Confusion {
+
+    var property turnosConfundido 
+
+    method puedeMoverse(pokemon) { 
+        pokemon.recibirDaño(20)
+        turnosConfundido -= 1
+        return turnosConfundido == 0
     }
 
-    method poder() = 50
+    method poder() = turnosConfundido * 40
 }
