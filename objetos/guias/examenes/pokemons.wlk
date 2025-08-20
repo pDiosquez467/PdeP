@@ -16,8 +16,6 @@ class Pokemon {
 
     method estaVivo() = vida > 0
 
-    method puedeMoverse() = condicion.puedeMoverse(self)
-
     method normalizar() {
         condicion = normal
     }
@@ -144,15 +142,27 @@ class Paralizado inherits CondicionEspecial {
     override method poder() = 30
 }
 
-class Confusion {
+class Confusion inherits CondicionEspecial {
 
     var property turnosConfundido 
 
-    method puedeMoverse(pokemon) { 
-        pokemon.recibirDaño(20)
-        turnosConfundido -= 1
-        return turnosConfundido == 0
+    override method intentarMoverse(pokemon) {
+        self.pasoUnTurno(pokemon)
+        try {
+            super(pokemon)
+        } 
+        catch e: DomainException {
+            pokemon.recibirDaño(20)
+            throw new DomainException(message = "El pokemon NO puede moverse y se hizo daño!")
+        }
     }
 
-    method poder() = turnosConfundido * 40
+    method pasoUnTurno(pokemon) {
+        turnosConfundido -= 1
+        if (turnosConfundido == 0) {
+            pokemon.normalizar()
+        }
+    }
+
+    override method poder() = turnosConfundido * 40
 }
